@@ -1,0 +1,5 @@
+1. As an event organizer, I want to create maps with specified quest locations so that the custom map would be playable by other people.
+2. As an event organizer, I want to host lobbies with participants so that other people could join the orienteering events with a specified map.
+
+3. As an event participant, I want to join lobbies already organized by others so that I can participate in an event on a certain map.
+4. As an event participant, I want to see the location of the quest points on the map so that I see clearly where to go during the orienteering.
