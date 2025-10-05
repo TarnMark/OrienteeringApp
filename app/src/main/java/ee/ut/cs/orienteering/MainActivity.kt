@@ -11,10 +11,19 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import ee.ut.cs.orienteering.ui.components.NavigationBar
 import ee.ut.cs.orienteering.ui.navigation.AppNavHost
+import android.util.Log
+import ee.ut.cs.orienteering.data.SeedLoader
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val questions = SeedLoader.loadQuestions(this)
+        val checkpoints = SeedLoader.loadCheckpoints(this)
+
+        Log.d("TEST", "Questions loaded: ${questions.size}")
+        Log.d("TEST", "Checkpoints loaded: ${checkpoints.size}")
+
         setContent {
             MaterialTheme {
                 MainScreen()

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "q1",
+    "text": "What is the capital city of Finland?",
+    "type": "mcq",
+    "options": ["Helsinki", "Oslo", "Copenhagen", "Stockholm"],
+    "correctIndex": 0
+  },
+  {
+    "id": "q2",
+    "text": "Who wrote Harry Potter?",
+    "type": "free",
+    "options": [],
+    "correctIndex": null
+  },
+  {
+    "id": "q3",
+    "text": "How long is a full marathon (in kilometers)?",
+    "type": "mcq",
+    "options": ["21", "30", "42.195", "50"],
+    "correctIndex": 2
+  },
+  {
+    "id": "q4",
+    "text": "Which direction does the sun rise from?",
+    "type": "mcq",
+    "options": ["North", "South", "East", "West"],
+    "correctIndex": 2
+  },
+  {
+    "id": "q5",
+    "text": "How many continents are there in the world?",
+    "type": "free",
+    "options": [],
+    "correctIndex": null
+  }
+]

@@ -10,7 +10,6 @@ import ee.ut.cs.orienteering.ui.screens.JoinLobbyScreen
 import ee.ut.cs.orienteering.ui.screens.CreateLobbyScreen
 import ee.ut.cs.orienteering.ui.screens.MapScreen
 import ee.ut.cs.orienteering.ui.screens.QuestionsScreen
-
 @Composable
 fun AppNavHost(
     navController: NavHostController,
@@ -23,6 +22,6 @@ fun AppNavHost(
         composable("join_lobby") { JoinLobbyScreen(navController) }
         composable("create_lobby") { CreateLobbyScreen(navController) }
         composable("map") { MapScreen(navController) }
-        composable("questions") { QuestionsScreen(navController) }
+        composable("questions") { QuestionsScreen() }
     }
 }

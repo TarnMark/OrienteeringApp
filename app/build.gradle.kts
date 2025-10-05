@@ -82,6 +82,8 @@ dependencies {
     //implementation("androidx.room:room-guava:$room_version")
 
     testImplementation(libs.androidx.room.testing)
+    implementation(libs.gson)
+
 
     //implementation("androidx.room:room-paging:$room_version")
 }

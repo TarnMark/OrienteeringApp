@@ -1,0 +1,37 @@
+[
+  {
+    "id": "c1",
+    "lat": 59.4370,
+    "lon": 24.7536,
+    "radiusM": 40,
+    "questionId": "q1"
+  },
+  {
+    "id": "c2",
+    "lat": 59.4385,
+    "lon": 24.7551,
+    "radiusM": 40,
+    "questionId": "q2"
+  },
+  {
+    "id": "c3",
+    "lat": 59.4364,
+    "lon": 24.7453,
+    "radiusM": 45,
+    "questionId": "q3"
+  },
+  {
+    "id": "c4",
+    "lat": 59.4339,
+    "lon": 24.7446,
+    "radiusM": 35,
+    "questionId": "q4"
+  },
+  {
+    "id": "c5",
+    "lat": 59.4323,
+    "lon": 24.7489,
+    "radiusM": 40,
+    "questionId": "q5"
+  }
+]
