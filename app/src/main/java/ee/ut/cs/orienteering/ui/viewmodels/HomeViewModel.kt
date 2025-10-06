@@ -11,4 +11,8 @@ class HomeViewModel : ViewModel() {
     fun onJoinLobbyClicked(navController: NavController) {
         navController.navigate("join_lobby")
     }
+
+    fun onAboutClicked(navController: NavController) {
+        navController.navigate("about")
+    }
 }
