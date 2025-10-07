@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
@@ -22,6 +23,7 @@ interface QuestDao {
     @Query("SELECT * FROM quests_table WHERE id = :id")
     fun getQuestById(id: Int): Flow<Quest?>
 
-    @Query("SELECT * FROM quests_table ORDER BY question ASC")
-    fun getAllQuests(): Flow<List<Quest>>
+    @Transaction
+    @Query("SELECT * FROM quests_table WHERE id = :questId")
+    fun getQuestWithQuestions(questId: Int): Flow<QuestWithQuestions?>
 }

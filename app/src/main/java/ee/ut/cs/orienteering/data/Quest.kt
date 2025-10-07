@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey
 data class Quest (
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    val question: String,
-    val location: String,
-    val answer: String
+    val title: String,
+    val code: String
 )

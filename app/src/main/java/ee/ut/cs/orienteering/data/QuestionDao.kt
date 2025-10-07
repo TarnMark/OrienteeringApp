@@ -15,12 +15,12 @@ interface QuestionDao {
     @Update
     suspend fun update(question: Question)
 
-    @Query("SELECT * FROM question_table WHERE id = :id")
+    @Query("SELECT * FROM questions_table WHERE id = :id")
     fun getQuestionById(id: Int): Flow<Question?>
 
-    @Query("SELECT * FROM question_table ORDER BY questionText ASC")
-    fun getAllQuestions(): Flow<List<Question>>
+    @Query("SELECT * FROM questions_table WHERE questId = :questId ORDER BY id ASC")
+    fun getQuestionsForQuest(questId: Int): Flow<List<Question>>
 
-    @Query("DELETE FROM question_table")
+    @Query("DELETE FROM questions_table")
     suspend fun deleteAll()
 }
