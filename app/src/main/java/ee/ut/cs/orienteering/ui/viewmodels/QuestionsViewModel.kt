@@ -1,6 +1,7 @@
 package ee.ut.cs.orienteering.ui.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import ee.ut.cs.orienteering.data.Question
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import ee.ut.cs.orienteering.data.AppDatabase
+import kotlinx.coroutines.launch
 
 
 class QuestionsViewModel(app: Application) : AndroidViewModel(app) {
@@ -16,4 +18,13 @@ class QuestionsViewModel(app: Application) : AndroidViewModel(app) {
     val questions: StateFlow<List<Question>> =
         dao.getAll()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    fun addQuestion(text: String) {
+        viewModelScope.launch {
+            val newQuestion = Question(
+                0, 1, text, "", ""
+            )
+            dao.insert(newQuestion)
+        }
+    }
 }
