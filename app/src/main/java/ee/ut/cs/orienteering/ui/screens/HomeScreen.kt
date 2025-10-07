@@ -44,7 +44,7 @@ fun HomeScreen(
     Scaffold (
         topBar = {
             TopAppBar(
-                title = { Text("Orienteering App", style = MaterialTheme.typography.titleLarge) },
+                title = { Text("Fast and Curious", style = MaterialTheme.typography.titleLarge) },
                 actions = {
                     IconButton(onClick = { viewModel.onAboutClicked(navController) }) {
                         Icon(
