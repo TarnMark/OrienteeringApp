@@ -26,6 +26,7 @@ fun QuestionsScreen(vm: QuestionsViewModel = viewModel()) {
     var userAnswer by rememberSaveable { mutableStateOf("") }
 
     var showDialog by remember { mutableStateOf(false) }
+    var showError by remember { mutableStateOf(false) }
 
     if (questions.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -55,16 +56,31 @@ fun QuestionsScreen(vm: QuestionsViewModel = viewModel()) {
             Spacer(Modifier.height(16.dp))
             OutlinedTextField(
                 value = userAnswer,
-                onValueChange = { userAnswer = it },
+                onValueChange = {
+                    userAnswer = it
+                    if (showError && it.isNotBlank()) showError = false },
                 label = { Text("Type your answer") },
                 singleLine = true,
+                isError = showError,
                 modifier = Modifier.fillMaxWidth()
             )
+            if (showError) {
+                Text(
+                    text = "Question cannot be empty",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp, start = 8.dp)
+                )
+            }
 
             Spacer(Modifier.height(buttonSpacing))
             Button(onClick = {
-                userAnswer = ""
-                index = if (index < questions.lastIndex) index + 1 else 0
+                if (userAnswer.isBlank()) {
+                    showError = true
+                } else {
+                    userAnswer = ""
+                    index = if (index < questions.lastIndex) index + 1 else 0
+                }
             }) {
                 Text("Next")
             }
