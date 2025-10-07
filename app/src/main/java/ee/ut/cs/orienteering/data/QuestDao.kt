@@ -12,8 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface QuestDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(quest: Quest)
-
+    suspend fun insert(quest: Quest): Long
     @Update
     suspend fun update(quest: Quest)
 

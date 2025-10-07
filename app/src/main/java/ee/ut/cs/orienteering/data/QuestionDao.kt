@@ -23,4 +23,13 @@ interface QuestionDao {
 
     @Query("DELETE FROM questions_table")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM questions_table ORDER BY id ASC")
+    fun getAll(): Flow<List<Question>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(items: List<Question>)
+
+    @Query("SELECT COUNT(*) FROM questions_table")
+    suspend fun count(): Int
 }
