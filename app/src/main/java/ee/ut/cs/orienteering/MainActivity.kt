@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-       // val questions = SeedLoader.loadQuestions(this)
+        // val questions = SeedLoader.loadQuestions(this)
         //val checkpoints = SeedLoader.loadCheckpoints(this)
 
         //Log.d("TEST", "Questions loaded: ${questions.size}")
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
                         Quest(
                             id = 0,
                             title = "Sample Quest",
-                            code = "DEMO123"
+                            code = "demo"
                         )
                     ).toInt()
 
@@ -69,15 +69,13 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    @Composable
+    fun MainScreen() {
+        val navController = rememberNavController()
 
-
-@Composable
-fun MainScreen() {
-    val navController = rememberNavController()
-
-    Scaffold(
-        bottomBar = { NavigationBar(navController) }
-    ) { innerPadding ->
-        AppNavHost(navController = navController, modifier = Modifier.padding(innerPadding))
-    }
-}}
+        Scaffold(
+            bottomBar = { NavigationBar(navController) }
+        ) { innerPadding ->
+            AppNavHost(navController = navController, modifier = Modifier.padding(innerPadding))
+        }
+    }}

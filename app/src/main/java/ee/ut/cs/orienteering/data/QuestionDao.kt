@@ -32,4 +32,11 @@ interface QuestionDao {
 
     @Query("SELECT COUNT(*) FROM questions_table")
     suspend fun count(): Int
+
+    @Query("SELECT COUNT(*) FROM questions_table WHERE questId = :questId")
+    suspend fun countForQuest(questId: Int): Int
+
+
+
+
 }

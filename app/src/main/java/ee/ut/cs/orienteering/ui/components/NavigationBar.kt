@@ -18,22 +18,46 @@ fun NavigationBar(navController: NavHostController) {
     val items = listOf(
         NavItem("home", "Home", Icons.Default.Home),
         NavItem("map", "Map", Icons.Default.Map),
+        // label оставляем "Questions"
         NavItem("questions", "Questions", Icons.AutoMirrored.Filled.List)
     )
 
     NavigationBar {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
+        val backStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = backStackEntry?.destination
+        val currentRoute = currentDestination?.route ?: ""
+        val currentQuestId = backStackEntry?.arguments?.getString("questId")
 
         items.forEach { item ->
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = item.label) },
                 label = { Text(item.label) },
-                selected = currentDestination.isTopLevelDestinationInHierarchy(item.route),
+                selected = when (item.route) {
+                    "questions" -> currentRoute.startsWith("questions")
+                    "map" -> currentRoute.startsWith("map")
+                    else -> currentDestination.isTopLevelDestinationInHierarchy(item.route)
+                },
                 onClick = {
-                    navController.navigate(item.route) {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
+                    when (item.route) {
+                        "questions" -> {
+                            if (currentQuestId != null) {
+                                navController.navigate("questions/$currentQuestId") {
+                                    popUpTo(navController.graph.startDestinationId)
+                                    launchSingleTop = true
+                                }
+                            } else {
+                                navController.navigate("join") {
+                                    popUpTo(navController.graph.startDestinationId)
+                                    launchSingleTop = true
+                                }
+                            }
+                        }
+                        else -> {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.startDestinationId)
+                                launchSingleTop = true
+                            }
+                        }
                     }
                 }
             )

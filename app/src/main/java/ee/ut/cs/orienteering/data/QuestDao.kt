@@ -25,4 +25,7 @@ interface QuestDao {
     @Transaction
     @Query("SELECT * FROM quests_table WHERE id = :questId")
     fun getQuestWithQuestions(questId: Int): Flow<QuestWithQuestions?>
+    @Query("SELECT * FROM quests_table WHERE code = :code LIMIT 1")
+    suspend fun getByCode(code: String): Quest?
+
 }

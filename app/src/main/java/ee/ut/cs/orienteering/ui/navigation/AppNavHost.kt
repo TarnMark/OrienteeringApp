@@ -16,15 +16,20 @@ import ee.ut.cs.orienteering.ui.screens.QuestionsScreen
 fun AppNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier) {
-    NavHost(
-        navController = navController,
-        startDestination = "home"
-    ) {
+    NavHost(navController, startDestination = "home") {
         composable("home") { HomeScreen(navController) }
-        composable("about") { AboutScreen(navController) } // may become profile screen later
+        composable("about") { AboutScreen(navController) }
         composable("join_lobby") { JoinLobbyScreen(navController) }
         composable("create_lobby") { CreateLobbyScreen(navController) }
-        composable("map") { MapScreen(navController) }
-        composable("questions") { QuestionsScreen() }
-    }
-}
+
+        composable("map/{questId}") { backStackEntry ->
+            val questId = backStackEntry.arguments?.getString("questId")?.toInt() ?: 0
+            MapScreen(navController = navController, questId = questId)
+        }
+
+
+        composable("questions/{questId}") { backStackEntry ->
+            val questId = backStackEntry.arguments?.getString("questId")?.toInt() ?: 0
+            QuestionsScreen(questId = questId)
+        }
+    }}

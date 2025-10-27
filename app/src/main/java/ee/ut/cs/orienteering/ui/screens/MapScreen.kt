@@ -83,7 +83,8 @@ fun OSMDroidMapView() {
 fun MapScreen(
     navController: NavController,
     viewModel: MapViewModel = viewModel(),
-    questionsViewModel : QuestionsViewModel = viewModel()
+    questionsViewModel: QuestionsViewModel = viewModel(),
+    questId: Int
 ) {
     // Disable back navigation
     BackHandler {}
