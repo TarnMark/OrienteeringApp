@@ -4,17 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
-import ee.ut.cs.orienteering.ui.components.NavigationBar
-import ee.ut.cs.orienteering.ui.navigation.AppNavHost
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.rememberNavController
 import ee.ut.cs.orienteering.data.AppDatabase
 import ee.ut.cs.orienteering.data.Quest
 import ee.ut.cs.orienteering.data.Question
+import ee.ut.cs.orienteering.ui.components.NavigationBar
+import ee.ut.cs.orienteering.ui.navigation.AppNavHost
+import ee.ut.cs.orienteering.ui.theme.OrienteeringTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            MaterialTheme {
+            OrienteeringTheme {
                 MainScreen()
             }
         }

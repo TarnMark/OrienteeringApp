@@ -1,39 +1,31 @@
 package ee.ut.cs.orienteering.ui.screens
 
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import ee.ut.cs.orienteering.R
+import ee.ut.cs.orienteering.ui.components.QuestionRow
 import ee.ut.cs.orienteering.ui.viewmodels.MapViewModel
 import ee.ut.cs.orienteering.ui.viewmodels.QuestionsViewModel
 import org.osmdroid.config.Configuration
@@ -91,12 +83,19 @@ fun OSMDroidMapView() {
 fun MapScreen(
     navController: NavController,
     viewModel: MapViewModel = viewModel(),
-    questionsViewModel: QuestionsViewModel = viewModel(LocalActivity.current as ComponentActivity)
+    questionsViewModel : QuestionsViewModel = viewModel()
 ) {
     // Disable back navigation
     BackHandler {}
 
-    val questions by questionsViewModel.questions.collectAsState()
+    // Keep the backstack instance so that the changes in questions don't get destroyed
+    // Doesn't work at the moment
+//    val navBackStackEntry by navController.currentBackStackEntryAsState()
+//    val questionsViewModel: QuestionsViewModel = viewModel(navBackStackEntry!!)
+
+    val colors = MaterialTheme.colorScheme
+
+    val screenPadding = dimensionResource(R.dimen.screen_padding)
 
     val sheetState = rememberBottomSheetScaffoldState()
 
@@ -106,35 +105,10 @@ fun MapScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 100.dp, max = 400.dp)
-                    .padding(16.dp)
+                    .fillMaxHeight(0.95f)
+                    .padding(screenPadding)
             ) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .width(40.dp)
-                        .height(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(Color.Gray.copy(alpha = 0.5f))
-                        .padding(bottom = 8.dp)
-                )
-                Text(
-                    text = "Questions",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-
-                HorizontalDivider()
-
-                LazyColumn {
-                    items(questions) { question ->
-                        Text(
-                            text = "• ${question.questionText}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-                    }
-                }
+                QuestionsList(questionsViewModel)
             }
         },
         sheetPeekHeight = 150.dp, // visible when collapsed
@@ -148,6 +122,37 @@ fun MapScreen(
                 .padding(innerPadding)
         ) {
             OSMDroidMapView()
+        }
+    }
+}
+
+
+@Composable
+fun QuestionsList(viewModel: QuestionsViewModel) {
+
+    val questions by viewModel.questions.collectAsState()
+    val checked by viewModel.checked.collectAsState()
+    val answers by viewModel.answers.collectAsState()
+
+    LazyColumn {
+        items(
+            items = questions,
+            key = { it.id }
+        ) { q ->
+
+            val isChecked = checked.contains(q.id)
+            val answer = answers[q.id] ?: ""
+
+
+            QuestionRow(
+                question = q,
+                isChecked = isChecked,
+                answerText = answer,
+                onCheckedToggle = { viewModel.toggleChecked(q.id) },
+                onAnswerChanged = { viewModel.updateAnswer(q.id, it) },
+                modifier = Modifier
+                    .padding(5.dp))
+
         }
     }
 }

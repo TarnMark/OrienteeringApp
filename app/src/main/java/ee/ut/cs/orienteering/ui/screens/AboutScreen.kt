@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ee.ut.cs.orienteering.R
-import ee.ut.cs.orienteering.ui.theme.Purple40
+import ee.ut.cs.orienteering.ui.theme.*
 import ee.ut.cs.orienteering.ui.viewmodels.AboutViewModel
 import ee.ut.cs.orienteering.ui.viewmodels.HomeViewModel
 
@@ -37,6 +37,8 @@ fun AboutScreen(
     navController: NavController,
     viewModel: AboutViewModel = viewModel()
 ) {
+    val colors = MaterialTheme.colorScheme;
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -50,7 +52,7 @@ fun AboutScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Purple40,
+                    containerColor = colors.primary,
                     titleContentColor = Color.White,
                     actionIconContentColor = Color.White
                 )

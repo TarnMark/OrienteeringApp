@@ -1,6 +1,5 @@
 package ee.ut.cs.orienteering.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,14 +21,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import ee.ut.cs.orienteering.ui.viewmodels.HomeViewModel
 import ee.ut.cs.orienteering.R
-import ee.ut.cs.orienteering.ui.theme.Blue40
-import ee.ut.cs.orienteering.ui.theme.Purple40
+import ee.ut.cs.orienteering.ui.viewmodels.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +33,8 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = viewModel()
 ) {
+    val colors = MaterialTheme.colorScheme;
+
     val screenPadding = dimensionResource(id = R.dimen.screen_padding)
     val buttonHeight = dimensionResource(id = R.dimen.button_height)
     val buttonSpacing = dimensionResource(id = R.dimen.button_spacing)
@@ -54,9 +52,9 @@ fun HomeScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Purple40,
-                    titleContentColor = Color.White,
-                    actionIconContentColor = Color.White
+                    containerColor = colors.primary,
+                    titleContentColor = colors.onPrimary,
+                    actionIconContentColor = colors.onPrimary
                 )
             )
         }

@@ -6,11 +6,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import ee.ut.cs.orienteering.ui.screens.AboutScreen
+import ee.ut.cs.orienteering.ui.screens.CreateLobbyScreen
 import ee.ut.cs.orienteering.ui.screens.HomeScreen
 import ee.ut.cs.orienteering.ui.screens.JoinLobbyScreen
-import ee.ut.cs.orienteering.ui.screens.CreateLobbyScreen
 import ee.ut.cs.orienteering.ui.screens.MapScreen
 import ee.ut.cs.orienteering.ui.screens.QuestionsScreen
+
 @Composable
 fun AppNavHost(
     navController: NavHostController,
