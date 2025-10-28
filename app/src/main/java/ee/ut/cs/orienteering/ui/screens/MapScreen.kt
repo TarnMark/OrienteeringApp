@@ -1,6 +1,5 @@
 package ee.ut.cs.orienteering.ui.screens
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -9,17 +8,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
@@ -30,6 +36,7 @@ import ee.ut.cs.orienteering.R
 import ee.ut.cs.orienteering.data.network.RetrofitInstance
 import ee.ut.cs.orienteering.data.network.WeatherRepository
 import ee.ut.cs.orienteering.ui.components.QuestionRow
+import ee.ut.cs.orienteering.ui.viewmodels.JoinLobbyViewModel
 import ee.ut.cs.orienteering.ui.viewmodels.MapViewModel
 import ee.ut.cs.orienteering.ui.viewmodels.QuestionsViewModel
 import ee.ut.cs.orienteering.ui.viewmodels.WeatherViewModel
@@ -92,25 +99,46 @@ fun MapScreen(
     navController: NavController,
     viewModel: MapViewModel = viewModel(),
     questionsViewModel: QuestionsViewModel = viewModel(),
+    questsViewModel: JoinLobbyViewModel = viewModel(),
     questId: Int
 ) {
     val weatherRepo = WeatherRepository(RetrofitInstance.api)
     val weatherViewModel: WeatherViewModel = viewModel(factory = WeatherViewModelFactory(weatherRepo))
     val weatherText by weatherViewModel.weatherText
 
-    // Disable back navigation
-    BackHandler {}
+    val colors = MaterialTheme.colorScheme
 
-    // Keep the backstack instance so that the changes in questions don't get destroyed
-    // Doesn't work at the moment
-//    val navBackStackEntry by navController.currentBackStackEntryAsState()
-//    val questionsViewModel: QuestionsViewModel = viewModel(navBackStackEntry!!)
+    // Disable back navigation
+//    BackHandler {}
+
 
     val screenPadding = dimensionResource(R.dimen.screen_padding)
 
     val sheetState = rememberBottomSheetScaffoldState()
 
     BottomSheetScaffold(
+        topBar = {
+            TopAppBar(
+            title = { Text("Quest nr $questId", style = MaterialTheme.typography.titleLarge) },
+            navigationIcon = {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "About",
+                        tint = colors.onPrimary
+                    )
+                }
+            },
+                actions = {
+                // button to submit the answers?
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = colors.primary,
+                titleContentColor = colors.onPrimary,
+                actionIconContentColor = colors.onPrimary
+            )
+            )
+        },
         scaffoldState = sheetState,
         sheetContent = {
             Column(
@@ -141,8 +169,8 @@ fun MapScreen(
                 text = weatherText ?: "",
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(16.dp),
-                style = MaterialTheme.typography.bodyMedium
+                    .padding(screenPadding),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
             )
         }
     }

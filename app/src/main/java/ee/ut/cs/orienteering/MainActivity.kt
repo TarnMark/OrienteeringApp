@@ -12,7 +12,6 @@ import androidx.navigation.compose.rememberNavController
 import ee.ut.cs.orienteering.data.AppDatabase
 import ee.ut.cs.orienteering.data.Quest
 import ee.ut.cs.orienteering.data.Question
-import ee.ut.cs.orienteering.ui.components.NavigationBar
 import ee.ut.cs.orienteering.ui.navigation.AppNavHost
 import ee.ut.cs.orienteering.ui.theme.OrienteeringTheme
 import kotlinx.coroutines.Dispatchers
@@ -74,7 +73,7 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
 
         Scaffold(
-            bottomBar = { NavigationBar(navController) }
+            //bottomBar = { NavigationBar(navController) }
         ) { innerPadding ->
             AppNavHost(navController = navController, modifier = Modifier.padding(innerPadding))
         }
