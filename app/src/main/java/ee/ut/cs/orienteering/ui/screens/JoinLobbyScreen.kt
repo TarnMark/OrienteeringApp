@@ -1,8 +1,29 @@
 package ee.ut.cs.orienteering.ui.screens
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -10,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ee.ut.cs.orienteering.ui.viewmodels.JoinLobbyViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JoinLobbyScreen(
     navController: NavController,
@@ -17,41 +39,63 @@ fun JoinLobbyScreen(
 ) {
     val state by viewModel.state.collectAsState()
     var code by remember { mutableStateOf("") }
+    val colors = MaterialTheme.colorScheme
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Enter lobby code", style = MaterialTheme.typography.titleMedium)
-
-        Spacer(Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = code,
-            onValueChange = { code = it },
-            label = { Text("Lobby code") },
-            singleLine = true
-        )
-
-        Spacer(Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                viewModel.joinLobby(code) { questId ->
-                    navController.navigate("map/$questId")
+    Scaffold (topBar = {
+        TopAppBar(
+            title = { Text("Fast and Curious", style = MaterialTheme.typography.titleLarge) },
+            navigationIcon = {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "About",
+                        tint = colors.onPrimary
+                    )
                 }
             },
-            enabled = !state.isLoading && code.isNotBlank()
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = colors.primary,
+                titleContentColor = colors.onPrimary,
+                actionIconContentColor = colors.onPrimary
+            )
+        )
+    })
+    {innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(if (state.isLoading) "Joining..." else "Join")
-        }
+            Text("Enter lobby code", style = MaterialTheme.typography.titleMedium)
 
-        state.errorMessage?.let {
-            Spacer(Modifier.height(8.dp))
-            Text(it, color = MaterialTheme.colorScheme.error)
+            Spacer(Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = code,
+                onValueChange = { code = it },
+                label = { Text("Lobby code") },
+                singleLine = true
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    viewModel.joinLobby(code) { questId ->
+                        navController.navigate("map/$questId")
+                    }
+                },
+                enabled = !state.isLoading && code.isNotBlank()
+            ) {
+                Text(if (state.isLoading) "Joining..." else "Join")
+            }
+
+            state.errorMessage?.let {
+                Spacer(Modifier.height(8.dp))
+                Text(it, color = MaterialTheme.colorScheme.error)
+            }
         }
     }
 }

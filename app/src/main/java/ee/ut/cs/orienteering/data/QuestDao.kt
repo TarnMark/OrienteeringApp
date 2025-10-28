@@ -18,6 +18,11 @@ interface QuestDao {
 
     @Delete
     suspend fun delete(quest: Quest)
+    @Query("DELETE FROM quests_table")
+    suspend fun deleteAll()
+
+    @Query("SELECT COUNT(*) FROM quests_table")
+    suspend fun count(): Int
 
     @Query("SELECT * FROM quests_table WHERE id = :id")
     fun getQuestById(id: Int): Flow<Quest?>

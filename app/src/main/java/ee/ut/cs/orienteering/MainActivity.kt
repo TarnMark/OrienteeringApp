@@ -36,21 +36,27 @@ class MainActivity : ComponentActivity() {
                     val qDao = db.questionDao()
                     val questDao = db.questDao()
 
-                    val questId = questDao.insert(
-                        Quest(
-                            id = 0,
-                            title = "Sample Quest",
-                            code = "demo"
-                        )
-                    ).toInt()
+//                    questDao.deleteAll()
+                    val questId =
+                    if (questDao.count() == 0) {
+                        questDao.insert(
+                            Quest(
+                                id = 0,
+                                title = "Sample Quest",
+                                code = "demo"
+                            )
+                        ).toInt()
+                    } else 0
 
+                    // for resetting the questions
+                    //qDao.deleteAll()
                     if (qDao.count() == 0) {
                         val sample = listOf(
-                            Question(0, questId, "What is the capital of Finland?", "", ""),
-                            Question(0, questId, "Name one essential item used in orienteering besides a compass.", "", ""),
-                            Question(0, questId, "How long is a full marathon (km)?", "", ""),
-                            Question(0, questId, "From which direction does the sun rise?", "", ""),
-                            Question(0, questId, "Write the abbreviation of Global Positioning System.", "", "")
+                            Question(0, questId, "What color is the flower pot?", "red", "58.384785, 26.721060"),
+                            Question(0, questId, "How many computers can you see?", "17", "58.385501,26.725032"),
+                            Question(0, questId, "What year was it built?", "2031", "58.380662, 26.725357"),
+                            Question(0, questId, "How many zebra stripes?", "11", "58.377636, 26.729277"),
+                            Question(0, questId, "Whose monument?", "Eduard Tubin", "58.376659, 26.725145")
                         )
                         qDao.insertAll(sample)
                     }
