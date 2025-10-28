@@ -88,6 +88,10 @@ dependencies {
     // OSMDroid maps
     implementation(libs.osmdroid.android)
 
+    // Open-Meteo
+    implementation(libs.retrofit)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.converter.gson)
 
     //implementation("androidx.room:room-paging:$room_version")
 }

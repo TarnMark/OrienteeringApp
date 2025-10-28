@@ -13,10 +13,12 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -25,9 +27,13 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ee.ut.cs.orienteering.R
+import ee.ut.cs.orienteering.data.network.RetrofitInstance
+import ee.ut.cs.orienteering.data.network.WeatherRepository
 import ee.ut.cs.orienteering.ui.components.QuestionRow
 import ee.ut.cs.orienteering.ui.viewmodels.MapViewModel
 import ee.ut.cs.orienteering.ui.viewmodels.QuestionsViewModel
+import ee.ut.cs.orienteering.ui.viewmodels.WeatherViewModel
+import ee.ut.cs.orienteering.ui.viewmodels.WeatherViewModelFactory
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -38,7 +44,7 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 
 @Composable
-fun OSMDroidMapView() {
+fun OSMDroidMapView(onLongPress: (GeoPoint) -> Unit) {
     val context = LocalContext.current
 
     AndroidView(
@@ -65,6 +71,8 @@ fun OSMDroidMapView() {
                     }
                     mapView.overlays.add(marker)
                     mapView.invalidate()
+                    onLongPress(p) // Fetch weather data
+
                     return true
                 }
             }
@@ -86,6 +94,10 @@ fun MapScreen(
     questionsViewModel: QuestionsViewModel = viewModel(),
     questId: Int
 ) {
+    val weatherRepo = WeatherRepository(RetrofitInstance.api)
+    val weatherViewModel: WeatherViewModel = viewModel(factory = WeatherViewModelFactory(weatherRepo))
+    val weatherText by weatherViewModel.weatherText
+
     // Disable back navigation
     BackHandler {}
 
@@ -93,8 +105,6 @@ fun MapScreen(
     // Doesn't work at the moment
 //    val navBackStackEntry by navController.currentBackStackEntryAsState()
 //    val questionsViewModel: QuestionsViewModel = viewModel(navBackStackEntry!!)
-
-    val colors = MaterialTheme.colorScheme
 
     val screenPadding = dimensionResource(R.dimen.screen_padding)
 
@@ -122,11 +132,21 @@ fun MapScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            OSMDroidMapView()
+            OSMDroidMapView(onLongPress = { geoPoint ->
+                weatherViewModel.loadWeather(geoPoint.latitude, geoPoint.longitude)
+            })
+
+            // Display weather in top-right corner
+            Text(
+                text = weatherText ?: "",
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
-
 
 @Composable
 fun QuestionsList(viewModel: QuestionsViewModel) {
