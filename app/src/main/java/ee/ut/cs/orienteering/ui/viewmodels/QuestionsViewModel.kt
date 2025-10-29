@@ -16,12 +16,12 @@ class QuestionsViewModel(app: Application) : AndroidViewModel(app) {
 
     private val dao = AppDatabase.getDatabase(app).questionDao()
 
-    val questions: StateFlow<List<Question>> =
-        dao.getAll()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-
     fun questionsForQuest(questId: Int) =
-        dao.getQuestionsForQuest(questId)  // Flow<List<Question>>
+        dao.getQuestionsForQuest(questId) // Flow<List<Question>>
+
+    fun questionsForQuestState(questId: Int): StateFlow<List<Question>> =
+        dao.getQuestionsForQuest(questId)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     fun addQuestion(text: String, questId: Int) {
         viewModelScope.launch {
@@ -36,7 +36,6 @@ class QuestionsViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-
     private val _answers = MutableStateFlow<Map<Int, String>>(emptyMap())
     val answers: StateFlow<Map<Int, String>> = _answers
 
@@ -44,9 +43,7 @@ class QuestionsViewModel(app: Application) : AndroidViewModel(app) {
     val checked: StateFlow<Set<Int>> = _checked
 
     fun updateAnswer(questionId: Int, newAnswer: String) {
-        _answers.value = _answers.value.toMutableMap().apply {
-            put(questionId, newAnswer)
-        }
+        _answers.value = _answers.value.toMutableMap().apply { put(questionId, newAnswer) }
     }
 
     fun toggleChecked(questionId: Int) {
@@ -55,7 +52,7 @@ class QuestionsViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun loadQuestionsFromApi(lobbyId: Int) { //will work with implemented API
+    fun loadQuestionsFromApi(lobbyId: Int) {
         viewModelScope.launch {
             try {
                 val response = listOf(

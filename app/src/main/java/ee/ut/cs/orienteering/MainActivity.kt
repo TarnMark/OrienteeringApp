@@ -38,15 +38,15 @@ class MainActivity : ComponentActivity() {
 
 //                    questDao.deleteAll()
                     val questId =
-                    if (questDao.count() == 0) {
-                        questDao.insert(
-                            Quest(
-                                id = 0,
-                                title = "Sample Quest",
-                                code = "demo"
-                            )
-                        ).toInt()
-                    } else 0
+                        if (questDao.count() == 0) {
+                            questDao.insert(
+                                Quest(
+                                    id = 0,
+                                    title = "Sample Quest",
+                                    code = "demo"
+                                )
+                            ).toInt()
+                        } else 0
 
                     // for resetting the questions
                     //qDao.deleteAll()

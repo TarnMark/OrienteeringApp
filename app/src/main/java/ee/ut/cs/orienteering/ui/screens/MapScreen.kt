@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -63,16 +65,28 @@ import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
+import androidx.compose.runtime.remember
+import ee.ut.cs.orienteering.data.AppDatabase
+import ee.ut.cs.orienteering.data.Quest
+import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.Dispatchers
+
 
 @Composable
 fun OSMDroidMapView(
     onWeatherTrigger: (GeoPoint) -> Unit,
     questionsViewModel: QuestionsViewModel,
-    listState: LazyListState
-    ) {
+    listState: LazyListState,
+    questId: Int
+) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val questions by questionsViewModel.questions.collectAsState()
+
+
+    val questions by questionsViewModel
+        .questionsForQuest(questId)
+        .collectAsState(initial = emptyList())
+
 
     val colors = MaterialTheme.colorScheme
 
@@ -151,11 +165,19 @@ fun MapScreen(
     viewModel: MapViewModel = viewModel(),
     questionsViewModel: QuestionsViewModel = viewModel(),
     questsViewModel: JoinLobbyViewModel = viewModel(),
+
     questId: Int
 ) {
+    val context = LocalContext.current
+    val questDao = remember { AppDatabase.getDatabase(context).questDao() }
+    val quest: Quest? by questDao.getQuestById(questId).collectAsState(initial = null)
     val weatherRepo = WeatherRepository(RetrofitInstance.api)
     val weatherViewModel: WeatherViewModel = viewModel(factory = WeatherViewModelFactory(weatherRepo))
     val weatherText by weatherViewModel.weatherText
+    val scope = rememberCoroutineScope()
+    val showLeaveDialog = remember { mutableStateOf(false) }
+    val questionDao = remember { AppDatabase.getDatabase(context).questionDao() }
+
 
     val listState = rememberLazyListState()
 
@@ -172,26 +194,35 @@ fun MapScreen(
     BottomSheetScaffold(
         topBar = {
             TopAppBar(
-            title = { Text("Quest nr $questId", style = MaterialTheme.typography.titleLarge) },
-            navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "About",
-                        tint = colors.onPrimary
-                    )
-                }
-            },
+                title = {
+                    Column {
+                        Text(quest?.title ?: "Quest #$questId", style = MaterialTheme.typography.titleLarge)
+                        quest?.code?.takeIf { it.isNotBlank() }?.let {
+                            Text("Code: $it", style = MaterialTheme.typography.labelMedium)
+                        }
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = { showLeaveDialog.value = true }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Leave"
+                        )
+                    }
+                },
                 actions = {
-                // button to submit the answers?
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = colors.primary,
-                titleContentColor = colors.onPrimary,
-                actionIconContentColor = colors.onPrimary
-            )
+                    TextButton(onClick = { showLeaveDialog.value = true }) { // ← дубль «Leave»
+                        Text("Leave", color = MaterialTheme.colorScheme.onPrimary)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colors.primary,
+                    titleContentColor = colors.onPrimary,
+                    actionIconContentColor = colors.onPrimary
+                )
             )
         },
+
         scaffoldState = sheetState,
         sheetContent = {
             Column(
@@ -200,7 +231,8 @@ fun MapScreen(
                     .fillMaxHeight(0.8f)
                     .padding(screenPadding)
             ) {
-                QuestionsList(questionsViewModel, listState)
+                QuestionsList(viewModel = questionsViewModel, listState = listState, questId = questId)
+
             }
         },
         sheetPeekHeight = 150.dp, // visible when collapsed
@@ -216,8 +248,10 @@ fun MapScreen(
             OSMDroidMapView(
                 questionsViewModel = questionsViewModel,
                 onWeatherTrigger = { geoPoint ->
-                weatherViewModel.loadWeather(geoPoint.latitude, geoPoint.longitude)},
-                listState = listState
+                    weatherViewModel.loadWeather(geoPoint.latitude, geoPoint.longitude)
+                },
+                listState = listState,
+                questId = questId
             )
 
             // Display weather in top-right corner
@@ -230,14 +264,47 @@ fun MapScreen(
             )
         }
     }
+    if (showLeaveDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showLeaveDialog.value = false },
+            title = { Text("Leave lobby?") },
+            text = { Text("You can come back later. Leave this lobby now?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLeaveDialog.value = false
+                        scope.launch(Dispatchers.IO) {
+                            val questionsCount = questionDao.countForQuest(questId)
+                        }
+                        navController.navigate("home") { popUpTo("home") { inclusive = false } }
+                    }
+                ) { Text("Leave") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLeaveDialog.value = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
 }
 
 @Composable
-fun QuestionsList(viewModel: QuestionsViewModel, listState: LazyListState) {
+fun QuestionsList(
+    viewModel: QuestionsViewModel,
+    listState: LazyListState,
+    questId: Int
+)
 
-    val questions by viewModel.questions.collectAsState()
-    val checked by viewModel.checked.collectAsState()
-    val answers by viewModel.answers.collectAsState()
+ {
+
+     val questions by viewModel
+         .questionsForQuest(questId)
+         .collectAsState(initial = emptyList())
+
+     val checked by viewModel.checked.collectAsState()
+     val answers by viewModel.answers.collectAsState()
 
     if (questions.isEmpty()) {
         Text("No questions yet for this lobby.", modifier = Modifier.fillMaxWidth())
