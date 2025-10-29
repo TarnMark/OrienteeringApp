@@ -22,9 +22,10 @@ fun AppNavHost(
         composable("join_lobby") { JoinLobbyScreen(navController) }
         composable("create_lobby") { CreateLobbyScreen(navController) }
 
-        composable("map/{questId}") { backStackEntry ->
+        composable("map/{editable}/{questId}") { backStackEntry ->
             val questId = backStackEntry.arguments?.getString("questId")?.toInt() ?: 0
-            MapScreen(navController = navController, questId = questId)
+            val editable = backStackEntry.arguments?.getString("editable").toBoolean()
+            MapScreen(navController = navController, questId = questId, editable = editable)
         }
 
 

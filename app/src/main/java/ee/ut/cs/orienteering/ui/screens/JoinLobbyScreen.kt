@@ -86,7 +86,7 @@ fun JoinLobbyScreen(
             Button(
                 onClick = {
                     viewModel.joinLobby(code) { questId ->
-                        navController.navigate("map/$questId")
+                        navController.navigate("map/false/$questId", )
                     }
                 },
                 enabled = !state.isLoading && code.isNotBlank()

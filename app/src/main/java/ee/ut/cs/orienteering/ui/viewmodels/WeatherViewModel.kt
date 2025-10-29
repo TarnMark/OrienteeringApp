@@ -19,6 +19,7 @@ class WeatherViewModel(private val repo: WeatherRepository) : ViewModel() {
                 } ?: "No data"
             } catch (e: Exception) {
                 weatherText.value = "Weather unavailable"
+//                Log.e("Weather",e.message?:"Something went wrong")
             }
         }
     }

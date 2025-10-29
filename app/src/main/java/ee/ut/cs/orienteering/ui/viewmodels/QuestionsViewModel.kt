@@ -23,14 +23,14 @@ class QuestionsViewModel(app: Application) : AndroidViewModel(app) {
         dao.getQuestionsForQuest(questId)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    fun addQuestion(text: String, questId: Int) {
+    fun addQuestion(text: String, questId: Int, location: String = "") {
         viewModelScope.launch {
             val newQuestion = Question(
                 id = 0,
                 questId = questId,
                 questionText = text,
                 answer = "",
-                location = ""
+                location = location
             )
             dao.insert(newQuestion)
         }

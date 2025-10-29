@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -34,7 +36,10 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,6 +54,8 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ee.ut.cs.orienteering.R
+import ee.ut.cs.orienteering.data.AppDatabase
+import ee.ut.cs.orienteering.data.Quest
 import ee.ut.cs.orienteering.data.network.RetrofitInstance
 import ee.ut.cs.orienteering.data.network.WeatherRepository
 import ee.ut.cs.orienteering.ui.components.QuestionRow
@@ -66,13 +73,6 @@ import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
-import androidx.compose.runtime.remember
-import ee.ut.cs.orienteering.data.AppDatabase
-import ee.ut.cs.orienteering.data.Quest
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.runtime.setValue
 
 
 @Composable
@@ -80,7 +80,8 @@ fun OSMDroidMapView(
     onWeatherTrigger: (GeoPoint) -> Unit,
     questionsViewModel: QuestionsViewModel,
     listState: LazyListState,
-    questId: Int
+    questId: Int,
+    editable: Boolean = false
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -90,6 +91,45 @@ fun OSMDroidMapView(
         .questionsForQuest(questId)
         .collectAsState(initial = emptyList())
 
+    val showAddDialog = remember { mutableStateOf(false) }
+    val addingPoint = remember { mutableStateOf("") }
+    if (showAddDialog.value) {
+        var text by remember { mutableStateOf("") }
+        var answer by remember { mutableStateOf("") }
+
+        AlertDialog(
+            onDismissRequest = { showAddDialog.value = false },
+            title = { Text("Add question") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        label = { Text("Question text") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = answer,
+                        onValueChange = { answer = it },
+                        label = { Text("Question answer") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        questionsViewModel.addQuestion(text.trim(), questId, addingPoint.value)
+                        showAddDialog.value = false
+                    },
+                    enabled = text.isNotBlank()
+                ) { Text("Add") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showAddDialog.value = false }) { Text("Cancel") }
+            }
+        )
+    }
 
     val colors = MaterialTheme.colorScheme
 
@@ -106,11 +146,15 @@ fun OSMDroidMapView(
             val mapEventsReceiver = object : MapEventsReceiver {
                 override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
 
-                    return false
+                    onWeatherTrigger(p) // Fetch weather data
+                    return true
                 }
 
                 override fun longPressHelper(p: GeoPoint): Boolean {
-                    onWeatherTrigger(p) // Fetch weather data
+                    if (editable) {
+                        addingPoint.value = (p.latitude.toString() + "," + p.longitude.toString())
+                        showAddDialog.value = true
+                    }
 
                     return true
                 }
@@ -143,6 +187,7 @@ fun OSMDroidMapView(
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
 
                         // scrolling to the corresponding question
+                        // doesn't scroll if there are not enough items in the list
                         setOnMarkerClickListener { _, _ ->
                             coroutineScope.launch {
                                 listState.animateScrollToItem(index, 0)
@@ -168,7 +213,8 @@ fun MapScreen(
     viewModel: MapViewModel = viewModel(),
     questionsViewModel: QuestionsViewModel = viewModel(),
     questsViewModel: JoinLobbyViewModel = viewModel(),
-    questId: Int
+    questId: Int,
+    editable: Boolean = false
 ) {
     val context = LocalContext.current
     val questDao = remember { AppDatabase.getDatabase(context).questDao() }
@@ -185,10 +231,9 @@ fun MapScreen(
     val colors = MaterialTheme.colorScheme
 
     val showLeaveDialog = remember { mutableStateOf(false) }
-    val showAddDialog = remember { mutableStateOf(false) }
 
     // Disable back navigation
-//    BackHandler {}
+    BackHandler {}
 
     BottomSheetScaffold(
         topBar = {
@@ -212,12 +257,6 @@ fun MapScreen(
                 actions = {
                     TextButton(onClick = { showLeaveDialog.value = true }) {
                         Text(stringResource(R.string.btn_leave), color = MaterialTheme.colorScheme.onPrimary)
-                    }
-                    IconButton(onClick = { showAddDialog.value = true }) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(R.string.btn_add_question)
-                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -256,7 +295,8 @@ fun MapScreen(
                     weatherViewModel.loadWeather(geoPoint.latitude, geoPoint.longitude)
                 },
                 listState = listState,
-                questId = questId
+                questId = questId,
+                editable = editable
             )
 
             // Display weather in top-right corner
@@ -287,36 +327,7 @@ fun MapScreen(
             }
         )
     }
-    if (showAddDialog.value) {
-        var text by remember { mutableStateOf("") }
-
-        AlertDialog(
-            onDismissRequest = { showAddDialog.value = false },
-            title = { Text("Add question") },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = text,
-                        onValueChange = { text = it },
-                        label = { Text("Question text") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        questionsViewModel.addQuestion(text.trim(), questId)
-                        showAddDialog.value = false
-                    },
-                    enabled = text.isNotBlank()
-                ) { Text("Add") }
-            },
-            dismissButton = {
-                TextButton(onClick = { showAddDialog.value = false }) { Text("Cancel") }
-            }
-        )
-    }
+    
 }
 
 

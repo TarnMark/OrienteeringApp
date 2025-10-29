@@ -23,7 +23,7 @@ class CreateLobbyViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     private suspend fun ensureUniqueCode(userInput: String?): String {
-        var candidate = userInput?.trim()?.uppercase().orEmpty()
+        var candidate = userInput?.trim().orEmpty()
         if (candidate.isBlank()) candidate = generateLobbyCode()
         while (questDao.getByCode(candidate) != null) {
             candidate = generateLobbyCode()
