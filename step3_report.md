@@ -1,4 +1,7 @@
 # Step 3 report
+## Development Process
+During this step, a lot of initial app design was refined and upgraded. Functionality was implemented to bring the application closer to the desired goal. Particularly, the Map screen was updated to go with the map and weather add-ons.
+
 ## Chosen API
 The Open-Meteo API was chosen for this project. It is a free, open-source, and no-authentication-required weather API that provides global weather data. It is ideal for mobile applications because it allows fast queries with minimal setup and offers a variety of weather variables (temperature, precipitation, wind speed, etc.).
 
