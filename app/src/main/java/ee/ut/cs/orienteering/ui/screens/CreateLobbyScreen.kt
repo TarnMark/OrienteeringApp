@@ -1,5 +1,8 @@
 package ee.ut.cs.orienteering.ui.screens
 
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -11,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import ee.ut.cs.orienteering.R
 import ee.ut.cs.orienteering.ui.viewmodels.CreateLobbyViewModel
 import androidx.compose.runtime.remember
 
@@ -35,7 +39,7 @@ fun CreateLobbyScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.btn_leave)
                         )
                     }
                 }
@@ -53,7 +57,7 @@ fun CreateLobbyScreen(
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Lobby name") },
+                label = { Text(stringResource(R.string.lobby_name)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -65,7 +69,7 @@ fun CreateLobbyScreen(
                 onValueChange = { code = it },
                 label = { Text("Lobby code (optional)") },
                 singleLine = true,
-                supportingText = { Text("If no code, will be generated automatically") },
+                supportingText = { Text(stringResource(R.string.no_lobby_code)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -80,7 +84,7 @@ fun CreateLobbyScreen(
                 enabled = title.isNotBlank() && !isCreating,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(if (isCreating) "Creating..." else "Create Lobby")
+                Text(if (isCreating) stringResource(R.string.btn_create_lobby_loading) else stringResource(R.string.btn_create_lobby))
             }
 
         }

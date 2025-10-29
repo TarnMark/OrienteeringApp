@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ee.ut.cs.orienteering.R
@@ -33,7 +34,7 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = viewModel()
 ) {
-    val colors = MaterialTheme.colorScheme;
+    val colors = MaterialTheme.colorScheme
 
     val screenPadding = dimensionResource(id = R.dimen.screen_padding)
     val buttonHeight = dimensionResource(id = R.dimen.button_height)
@@ -42,12 +43,12 @@ fun HomeScreen(
     Scaffold (
         topBar = {
             TopAppBar(
-                title = { Text("Fast and Curious", style = MaterialTheme.typography.titleLarge) },
+                title = { Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleLarge) },
                 actions = {
                     IconButton(onClick = { viewModel.onAboutClicked(navController) }) {
                         Icon(
                             imageVector = Icons.Default.Info,
-                            contentDescription = "About"
+                            contentDescription = stringResource(R.string.about)
                         )
                     }
                 },
@@ -75,7 +76,7 @@ fun HomeScreen(
                     .fillMaxWidth(0.6f)
                     .height(buttonHeight)
             ) {
-                Text(text = "Create Lobby")
+                Text(text = stringResource(R.string.btn_create_lobby))
             }
 
             Button(
@@ -84,7 +85,7 @@ fun HomeScreen(
                     .fillMaxWidth(0.6f)
                     .height(buttonHeight)
             ) {
-                Text(text = "Join Lobby")
+                Text(text = stringResource(R.string.btn_join_lobby))
             }
         }
     }

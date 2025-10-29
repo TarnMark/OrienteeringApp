@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.graphics.createBitmap
@@ -135,7 +136,7 @@ fun OSMDroidMapView(
 
                     val marker = Marker(mapView).apply {
                         position = it
-                        title = "Question ${question.id}"
+                        title = context.getString(R.string.map_marker_question_title, question.id)
                         this.icon = icon
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
 
@@ -196,9 +197,9 @@ fun MapScreen(
             TopAppBar(
                 title = {
                     Column {
-                        Text(quest?.title ?: "Quest #$questId", style = MaterialTheme.typography.titleLarge)
+                        Text(quest?.title ?: stringResource(R.string.quest_title, questId), style = MaterialTheme.typography.titleLarge)
                         quest?.code?.takeIf { it.isNotBlank() }?.let {
-                            Text("Code: $it", style = MaterialTheme.typography.labelMedium)
+                            Text(stringResource(R.string.code, it), style = MaterialTheme.typography.labelMedium)
                         }
                     }
                 },
@@ -206,13 +207,13 @@ fun MapScreen(
                     IconButton(onClick = { showLeaveDialog.value = true }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Leave"
+                            contentDescription = stringResource(R.string.btn_back)
                         )
                     }
                 },
                 actions = {
-                    TextButton(onClick = { showLeaveDialog.value = true }) { // ← дубль «Leave»
-                        Text("Leave", color = MaterialTheme.colorScheme.onPrimary)
+                    TextButton(onClick = { showLeaveDialog.value = true }) { // ← «Leave»
+                        Text(stringResource(R.string.btn_leave), color = MaterialTheme.colorScheme.onPrimary)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -267,8 +268,8 @@ fun MapScreen(
     if (showLeaveDialog.value) {
         AlertDialog(
             onDismissRequest = { showLeaveDialog.value = false },
-            title = { Text("Leave lobby?") },
-            text = { Text("You can come back later. Leave this lobby now?") },
+            title = { Text(stringResource(R.string.leave_lobby_title)) },
+            text = { Text(stringResource(R.string.leave_lobby_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -278,11 +279,11 @@ fun MapScreen(
                         }
                         navController.navigate("home") { popUpTo("home") { inclusive = false } }
                     }
-                ) { Text("Leave") }
+                ) { Text(stringResource(R.string.btn_leave)) }
             },
             dismissButton = {
                 TextButton(onClick = { showLeaveDialog.value = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.btn_cancel))
                 }
             }
         )
@@ -307,7 +308,7 @@ fun QuestionsList(
      val answers by viewModel.answers.collectAsState()
 
     if (questions.isEmpty()) {
-        Text("No questions yet for this lobby.", modifier = Modifier.fillMaxWidth())
+        Text(stringResource(R.string.no_questions), modifier = Modifier.fillMaxWidth())
     } else {
         LazyColumn(state = listState) {
             itemsIndexed(

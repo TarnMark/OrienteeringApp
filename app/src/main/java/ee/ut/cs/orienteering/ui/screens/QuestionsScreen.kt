@@ -8,8 +8,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ee.ut.cs.orienteering.R
 import ee.ut.cs.orienteering.ui.components.QuestionRow
 import ee.ut.cs.orienteering.ui.viewmodels.QuestionsViewModel
 
@@ -22,19 +24,19 @@ fun QuestionsScreen(questId: Int, viewModel: QuestionsViewModel = viewModel()) {
     var showAdd by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { CenterAlignedTopAppBar(title = { Text("Lobby #$questId Questions") }) },
+        topBar = { CenterAlignedTopAppBar(title = { Text(stringResource(R.string.lobby_questions_title, questId)) }) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAdd = true },
                 modifier = Modifier.padding(bottom = 80.dp)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add question")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.btn_add_question))
             }
         }
     ) { innerPadding ->
         Column(Modifier.padding(innerPadding).padding(12.dp)) {
             if (questions.isEmpty()) {
-                Text("No questions yet for this lobby.")
+                Text(stringResource(R.string.no_questions))
             } else {
                 LazyColumn {
                     items(questions, key = { it.id }) { q ->
@@ -70,19 +72,19 @@ private fun AddQuestionDialog(
     var text by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add question") },
+        title = { Text(stringResource(R.string.btn_add_question)) },
         text = {
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it },
-                label = { Text("Question text") }
+                label = { Text(stringResource(R.string.question_text)) }
             )
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(text) }, enabled = text.isNotBlank()) {
-                Text("Add")
+                Text(stringResource(R.string.btn_add))
             }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.btn_cancel)) } }
     )
 }

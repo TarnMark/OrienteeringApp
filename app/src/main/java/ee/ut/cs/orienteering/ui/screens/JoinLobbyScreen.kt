@@ -26,9 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import ee.ut.cs.orienteering.R
 import ee.ut.cs.orienteering.ui.viewmodels.JoinLobbyViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,12 +45,12 @@ fun JoinLobbyScreen(
 
     Scaffold (topBar = {
         TopAppBar(
-            title = { Text("Fast and Curious", style = MaterialTheme.typography.titleLarge) },
+            title = { Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleLarge) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "About",
+                        contentDescription = stringResource(R.string.btn_back),
                         tint = colors.onPrimary
                     )
                 }
@@ -68,14 +70,14 @@ fun JoinLobbyScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Enter lobby code", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.enter_lobby_code), style = MaterialTheme.typography.titleMedium)
 
             Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = code,
                 onValueChange = { code = it },
-                label = { Text("Lobby code") },
+                label = { Text(stringResource(R.string.lobby_code)) },
                 singleLine = true
             )
 
@@ -89,7 +91,7 @@ fun JoinLobbyScreen(
                 },
                 enabled = !state.isLoading && code.isNotBlank()
             ) {
-                Text(if (state.isLoading) "Joining..." else "Join")
+                Text(if (state.isLoading) stringResource(R.string.btn_join_loading) else stringResource(R.string.btn_join))
             }
 
             state.errorMessage?.let {

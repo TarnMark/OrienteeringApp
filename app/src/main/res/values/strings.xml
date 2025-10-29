@@ -1,3 +1,41 @@
 <resources>
     <string name="app_name">Fast and Curious</string>
+
+    <!-- Common -->
+    <string name="btn_back">Back</string>
+    <string name="about">About</string>
+
+    <!-- Home Screen -->
+    <string name="btn_create_lobby">Create Lobby</string>
+    <string name="btn_join_lobby">Join Lobby</string>
+
+    <!-- Join Lobby Screen -->
+    <string name="enter_lobby_code">Enter lobby code</string>
+    <string name="lobby_code">Lobby code</string>
+    <string name="btn_join">Join</string>
+    <string name="btn_join_loading">Joining…</string>
+
+    <!-- Create Lobby Screen -->
+    <string name="btn_leave">Leave</string>
+    <string name="lobby_name">Lobby name</string>
+    <string name="no_lobby_code">If no code, will be generated automatically</string>
+    <string name="btn_create_lobby_loading">Creating…</string>
+
+    <!-- Questions Screen -->
+    <string name="lobby_questions_title">Lobby #%1$d Questions</string>
+    <string name="btn_add_question">Add question</string>
+    <string name="no_questions">No questions yet for this lobby.</string>
+    <string name="question_text">Question text</string>
+    <string name="btn_add">Add</string>
+    <string name="btn_cancel">Cancel</string>
+
+    <!-- Question Row -->
+    <string name="answer_field">Your answer</string>
+
+    <!-- Map Screen -->
+    <string name="quest_title">Quest #%1$d</string>
+    <string name="map_marker_question_title">Question %1$d</string>
+    <string name="code">Code: %1$s</string>
+    <string name="leave_lobby_title">Leave lobby?</string>
+    <string name="leave_lobby_message">You can come back later. Leave this lobby now?</string>
 </resources>

@@ -23,8 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import ee.ut.cs.orienteering.R
 import ee.ut.cs.orienteering.data.Question
 
 @Composable
@@ -88,7 +90,7 @@ fun QuestionRow(
             TextField(
                 value = answerText,
                 onValueChange =  onAnswerChanged ,
-                label = { Text("Your answer") },
+                label = { Text(stringResource(R.string.answer_field)) },
                 modifier = Modifier
                     .fillMaxWidth()
             )
