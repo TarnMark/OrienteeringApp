@@ -70,7 +70,9 @@ import androidx.compose.runtime.remember
 import ee.ut.cs.orienteering.data.AppDatabase
 import ee.ut.cs.orienteering.data.Quest
 import androidx.compose.runtime.mutableStateOf
-import kotlinx.coroutines.Dispatchers
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.runtime.setValue
 
 
 @Composable
@@ -166,7 +168,6 @@ fun MapScreen(
     viewModel: MapViewModel = viewModel(),
     questionsViewModel: QuestionsViewModel = viewModel(),
     questsViewModel: JoinLobbyViewModel = viewModel(),
-
     questId: Int
 ) {
     val context = LocalContext.current
@@ -175,22 +176,19 @@ fun MapScreen(
     val weatherRepo = WeatherRepository(RetrofitInstance.api)
     val weatherViewModel: WeatherViewModel = viewModel(factory = WeatherViewModelFactory(weatherRepo))
     val weatherText by weatherViewModel.weatherText
-    val scope = rememberCoroutineScope()
-    val showLeaveDialog = remember { mutableStateOf(false) }
-    val questionDao = remember { AppDatabase.getDatabase(context).questionDao() }
 
-
+    // UI state
     val listState = rememberLazyListState()
+    val sheetState = rememberBottomSheetScaffoldState()
+    val screenPadding = dimensionResource(R.dimen.screen_padding)
 
     val colors = MaterialTheme.colorScheme
 
+    val showLeaveDialog = remember { mutableStateOf(false) }
+    val showAddDialog = remember { mutableStateOf(false) }
+
     // Disable back navigation
 //    BackHandler {}
-
-
-    val screenPadding = dimensionResource(R.dimen.screen_padding)
-
-    val sheetState = rememberBottomSheetScaffoldState()
 
     BottomSheetScaffold(
         topBar = {
@@ -212,8 +210,14 @@ fun MapScreen(
                     }
                 },
                 actions = {
-                    TextButton(onClick = { showLeaveDialog.value = true }) { // ← «Leave»
+                    TextButton(onClick = { showLeaveDialog.value = true }) {
                         Text(stringResource(R.string.btn_leave), color = MaterialTheme.colorScheme.onPrimary)
+                    }
+                    IconButton(onClick = { showAddDialog.value = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.btn_add_question)
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -268,28 +272,53 @@ fun MapScreen(
     if (showLeaveDialog.value) {
         AlertDialog(
             onDismissRequest = { showLeaveDialog.value = false },
-            title = { Text(stringResource(R.string.leave_lobby_title)) },
-            text = { Text(stringResource(R.string.leave_lobby_message)) },
+            title = { Text("Leave lobby?") },
+            text = { Text("You can come back later. Leave this lobby now?") },
             confirmButton = {
                 TextButton(
                     onClick = {
                         showLeaveDialog.value = false
-                        scope.launch(Dispatchers.IO) {
-                            val questionsCount = questionDao.countForQuest(questId)
-                        }
-                        navController.navigate("home") { popUpTo("home") { inclusive = false } }
+                        navController.popBackStack()
                     }
-                ) { Text(stringResource(R.string.btn_leave)) }
+                ) { Text("Leave") }
             },
             dismissButton = {
-                TextButton(onClick = { showLeaveDialog.value = false }) {
-                    Text(stringResource(R.string.btn_cancel))
-                }
+                TextButton(onClick = { showLeaveDialog.value = false }) { Text("Cancel") }
             }
         )
     }
+    if (showAddDialog.value) {
+        var text by remember { mutableStateOf("") }
 
+        AlertDialog(
+            onDismissRequest = { showAddDialog.value = false },
+            title = { Text("Add question") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        label = { Text("Question text") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        questionsViewModel.addQuestion(text.trim(), questId)
+                        showAddDialog.value = false
+                    },
+                    enabled = text.isNotBlank()
+                ) { Text("Add") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showAddDialog.value = false }) { Text("Cancel") }
+            }
+        )
+    }
 }
+
 
 @Composable
 fun QuestionsList(

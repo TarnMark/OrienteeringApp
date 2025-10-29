@@ -65,4 +65,16 @@ class QuestionsViewModel(app: Application) : AndroidViewModel(app) {
             }
         }
     }
+    fun addQuestionWithLocation(text: String, questId: Int, location: String) {
+        viewModelScope.launch {
+            val newQuestion = Question(
+                id = 0,
+                questId = questId,
+                questionText = text,
+                answer = "",
+                location = location
+            )
+            dao.insert(newQuestion)
+        }
+    }
 }
