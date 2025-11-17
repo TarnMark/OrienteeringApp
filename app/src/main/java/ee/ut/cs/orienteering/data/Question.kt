@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 
 @Entity(
     tableName = "questions_table",
@@ -17,6 +18,7 @@ import androidx.room.PrimaryKey
     ],
     indices = [Index(value = ["questId"])]
 )
+@Serializable
 data class Question(
     @PrimaryKey(autoGenerate = true)
     val id: Int,

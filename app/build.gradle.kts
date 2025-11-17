@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     id("com.google.devtools.ksp")
+    kotlin("plugin.serialization") version "2.0.0"
 }
 
 android {
@@ -92,6 +93,10 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.converter.gson)
+
+    // QR code
+    implementation(libs.core)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     //implementation("androidx.room:room-paging:$room_version")
 }

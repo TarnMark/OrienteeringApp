@@ -22,6 +22,19 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- QR code reading -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Accept your custom QR link format -->
+                <data
+                    android:scheme="qrexport"
+                    android:host="quest" />
+            </intent-filter>
+
         </activity>
     </application>
 

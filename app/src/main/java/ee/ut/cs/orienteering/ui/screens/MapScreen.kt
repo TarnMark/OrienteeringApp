@@ -1,11 +1,14 @@
 package ee.ut.cs.orienteering.ui.screens
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,20 +17,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -37,18 +45,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -231,6 +242,8 @@ fun MapScreen(
     val colors = MaterialTheme.colorScheme
 
     val showLeaveDialog = remember { mutableStateOf(false) }
+    val showQrDialog = remember { mutableStateOf(false) }
+
 
     // Disable back navigation
     BackHandler {}
@@ -307,6 +320,18 @@ fun MapScreen(
                     .padding(screenPadding),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
             )
+
+            IconButton(
+                onClick = { showQrDialog.value = true },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(10.dp)
+                    .background(colors.primary)
+            ) {
+                Icon(Icons.Default.QrCode,
+                    contentDescription = "Share quest",
+                    modifier = Modifier.background(colors.background))
+            }
         }
     }
     if (showLeaveDialog.value) {
@@ -327,7 +352,46 @@ fun MapScreen(
             }
         )
     }
-    
+    if (showQrDialog.value) {
+        Dialog(onDismissRequest = { showQrDialog.value = false }) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                tonalElevation = 4.dp,
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Quest QR Code", style = MaterialTheme.typography.titleLarge)
+
+                    Spacer(Modifier.height(16.dp))
+
+                    val qrBitmap by produceState<Bitmap?>(initialValue = null, key1 = quest?.id) {
+                        quest?.let { value = questionsViewModel.generateQuestQrBitmap(it) }
+                    }
+
+                    if (qrBitmap != null) {
+                        Image(
+                            bitmap = qrBitmap!!.asImageBitmap(),
+                            contentDescription = "Quest QR",
+                            modifier = Modifier.size(250.dp)
+                        )
+
+                        Spacer(Modifier.height(16.dp))
+
+                        Button(onClick = {
+                            questionsViewModel.saveQrToGallery(qrBitmap!!)
+                        }) {
+                            Text("Download code")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
 }
 
 

@@ -1,5 +1,6 @@
 package ee.ut.cs.orienteering.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -16,13 +18,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ee.ut.cs.orienteering.R
 import ee.ut.cs.orienteering.ui.viewmodels.JoinLobbyViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +46,11 @@ fun JoinLobbyScreen(
     viewModel: JoinLobbyViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val scope = rememberCoroutineScope()
+    val jsonToImport by viewModel.importedQuestJsonFlow.collectAsState(null)
+    LaunchedEffect(jsonToImport) {
+        Log.d("QR", "Composable sees importedJson change: ${jsonToImport?.length}")
+    }
     var code by remember { mutableStateOf("") }
     val colors = MaterialTheme.colorScheme
 
@@ -98,6 +109,31 @@ fun JoinLobbyScreen(
                 Spacer(Modifier.height(8.dp))
                 Text(it, color = MaterialTheme.colorScheme.error)
             }
+
+            if (jsonToImport != null) {
+                AlertDialog(
+                    onDismissRequest = { viewModel.clearEmptyJson() },
+                    title = { Text("Import Quest") },
+                    text = { Text("Do you want to import this quest?") },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            scope.launch {
+                                val questId = viewModel.importQuestFromJson(jsonToImport!!)
+                                navController.navigate("map/false/$questId")
+                                viewModel.clearEmptyJson()
+                            }
+                        }) {
+                            Text("Import")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { viewModel.clearEmptyJson() }) {
+                            Text(stringResource(R.string.btn_cancel))
+                        }
+                    }
+                )
+            }
+
         }
     }
 }

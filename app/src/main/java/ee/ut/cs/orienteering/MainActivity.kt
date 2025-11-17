@@ -1,8 +1,13 @@
 package ee.ut.cs.orienteering
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Base64
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -14,6 +19,7 @@ import ee.ut.cs.orienteering.data.Quest
 import ee.ut.cs.orienteering.data.Question
 import ee.ut.cs.orienteering.ui.navigation.AppNavHost
 import ee.ut.cs.orienteering.ui.theme.OrienteeringTheme
+import ee.ut.cs.orienteering.ui.viewmodels.JoinLobbyViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -67,10 +73,46 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        handleQrImportIntent(intent)
 
         setContent {
             OrienteeringTheme {
                 MainScreen()
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        Log.d("QR", "Received QR intent: ${intent.type}")
+        super.onNewIntent(intent)
+        handleQrImportIntent(intent)
+    }
+
+
+    private val joinLobbyViewModel: JoinLobbyViewModel by viewModels()
+    private fun handleQrImportIntent(intent: Intent?) {
+        val uri = intent?.data ?: return
+        if (uri.scheme == "qrexport" && uri.host == "quest") {
+            val base64 = uri.getQueryParameter("data") ?: return
+            val json = String(Base64.decode(base64, Base64.DEFAULT))
+
+            lifecycleScope.launch {
+                try {
+                    val questCode = joinLobbyViewModel.importQuestFromJson(json)
+
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Quest imported! Code: $questCode",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Failed to import quest",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }
