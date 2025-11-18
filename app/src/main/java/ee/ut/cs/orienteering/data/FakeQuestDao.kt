@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.flowOf
 /**
  * Simple in-memory implementation of QuestDao used ONLY in unit tests.
  */
-class FakeQuestDao : QuestDao {
+class FakeQuestDao(
+    val returnNull: Boolean = false
+) : QuestDao {
 
     // In-memory storage for Quest entities.
     private val quests = mutableListOf<Quest>()

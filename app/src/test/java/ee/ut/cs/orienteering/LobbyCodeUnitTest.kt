@@ -8,7 +8,7 @@ import org.junit.Test
  * works correctly by trimming spaces, converting text to uppercase,
  * and removing all characters except letters and digits.
  */
-class UnitTest2 {
+class LobbyCodeUnitTest {
 
     /**
      * Normalizes a raw lobby code input:

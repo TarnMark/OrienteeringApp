@@ -17,15 +17,15 @@ data class LobbyUiState(
     val errorMessage: String? = null
 )
 
-class JoinLobbyViewModel(app: Application) : AndroidViewModel(app) {
+open class JoinLobbyViewModel(app: Application) : AndroidViewModel(app) {
 
     private val questDao = AppDatabase.getDatabase(app).questDao()
     private val questionDao = AppDatabase.getDatabase(app).questionDao()
 
     private val _state = MutableStateFlow(LobbyUiState())
-    val state: StateFlow<LobbyUiState> = _state
+    open val state: StateFlow<LobbyUiState> = _state
 
-    fun joinLobby(code: String, onSuccess: (questId: Int) -> Unit) = viewModelScope.launch {
+    open fun joinLobby(code: String, onSuccess: (questId: Int) -> Unit) = viewModelScope.launch {
         _state.value = LobbyUiState(isLoading = true)
         try {
             val quest = questDao.getByCode(code.trim())
@@ -41,12 +41,12 @@ class JoinLobbyViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     // QR code import
-    val importedQuestJsonFlow = MutableSharedFlow<String?>(extraBufferCapacity = 1)
-    fun emitImportedJson(json: String) {
+    open val importedQuestJsonFlow = MutableSharedFlow<String?>(extraBufferCapacity = 1)
+    open fun emitImportedJson(json: String) {
         Log.d("QR", "Emitting JSON to flow: $json")
         importedQuestJsonFlow.tryEmit(json)
     }
-    fun clearEmptyJson() {
+    open fun clearEmptyJson() {
         importedQuestJsonFlow.tryEmit(null)
     }
 
