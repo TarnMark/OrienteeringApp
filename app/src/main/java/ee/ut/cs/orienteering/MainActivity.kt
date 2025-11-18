@@ -1,5 +1,7 @@
 package ee.ut.cs.orienteering
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
@@ -89,18 +91,22 @@ class MainActivity : ComponentActivity() {
 
     private val joinLobbyViewModel: JoinLobbyViewModel by viewModels()
     private fun handleQrImportIntent(intent: Intent?) {
+//        Log.d("QR import", "Accepted package: " + (intent?.toString()))
         val uri = intent?.data ?: return
         if (uri.scheme == "qrexport" && uri.host == "quest") {
             val base64 = uri.getQueryParameter("data") ?: return
             val json = String(Base64.decode(base64, Base64.DEFAULT))
-
             lifecycleScope.launch {
                 try {
                     val questCode = joinLobbyViewModel.importQuestFromJson(json)
 
+                    val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip = ClipData.newPlainText("Quest Code", questCode)
+                    clipboard.setPrimaryClip(clip)
+
                     Toast.makeText(
                         this@MainActivity,
-                        "Quest imported! Code: $questCode",
+                        "Quest imported! Code: $questCode (copied to clipboard)",
                         Toast.LENGTH_LONG
                     ).show()
 

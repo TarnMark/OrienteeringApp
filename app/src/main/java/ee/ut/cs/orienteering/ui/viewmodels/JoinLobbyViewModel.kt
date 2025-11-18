@@ -1,12 +1,10 @@
 package ee.ut.cs.orienteering.ui.viewmodels
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import ee.ut.cs.orienteering.data.AppDatabase
 import ee.ut.cs.orienteering.data.ImportedQuest
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -38,16 +36,6 @@ open class JoinLobbyViewModel(app: Application) : AndroidViewModel(app) {
         } catch (t: Throwable) {
             _state.value = LobbyUiState(errorMessage = "Error: ${t.message}")
         }
-    }
-
-    // QR code import
-    open val importedQuestJsonFlow = MutableSharedFlow<String?>(extraBufferCapacity = 1)
-    open fun emitImportedJson(json: String) {
-        Log.d("QR", "Emitting JSON to flow: $json")
-        importedQuestJsonFlow.tryEmit(json)
-    }
-    open fun clearEmptyJson() {
-        importedQuestJsonFlow.tryEmit(null)
     }
 
 
