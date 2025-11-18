@@ -3,7 +3,6 @@ package ee.ut.cs.orienteering
 import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -83,7 +82,6 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onNewIntent(intent: Intent) {
-        Log.d("QR", "Received QR intent: ${intent.type}")
         super.onNewIntent(intent)
         handleQrImportIntent(intent)
     }

@@ -54,11 +54,16 @@ class JoinLobbyViewModel(app: Application) : AndroidViewModel(app) {
     suspend fun importQuestFromJson(json: String): String {
         val data = Json.decodeFromString<ImportedQuest>(json)
         val code = data.quest.code
+        val quest = data.quest.copy(id = 0)
         // Save quest and get new questId
-        val newQuestId = questDao.insert(data.quest.copy(id = 0)).toInt()
-        // Save questions for the new quest
+        if (questDao.getByCode(code)==null)
+                questDao.insert(quest).toInt()
+        else questDao.update(quest)
+        // Save/update questions for the new quest
+        val questId = questDao.getByCode(code)?.id
+        questionDao.deleteByQuest(questId!!)
         data.questions.forEach { q ->
-            questionDao.insert(q.copy(id = 0, questId = newQuestId))
+            questionDao.insert(q.copy(id = 0, questId = questId))
         }
         return code
     }

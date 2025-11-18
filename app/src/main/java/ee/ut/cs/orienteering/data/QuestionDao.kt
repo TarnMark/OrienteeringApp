@@ -24,6 +24,9 @@ interface QuestionDao {
     @Query("DELETE FROM questions_table")
     suspend fun deleteAll()
 
+    @Query("DELETE FROM questions_table WHERE questId = :questId")
+    suspend fun deleteByQuest(questId: Int)
+
     @Query("SELECT * FROM questions_table ORDER BY id ASC")
     fun getAll(): Flow<List<Question>>
 

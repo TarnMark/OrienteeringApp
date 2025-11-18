@@ -1,6 +1,5 @@
 package ee.ut.cs.orienteering.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,7 +21,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,9 +46,6 @@ fun JoinLobbyScreen(
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
     val jsonToImport by viewModel.importedQuestJsonFlow.collectAsState(null)
-    LaunchedEffect(jsonToImport) {
-        Log.d("QR", "Composable sees importedJson change: ${jsonToImport?.length}")
-    }
     var code by remember { mutableStateOf("") }
     val colors = MaterialTheme.colorScheme
 
