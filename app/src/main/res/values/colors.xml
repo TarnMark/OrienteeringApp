@@ -13,4 +13,7 @@
 
     <color name="dark_main_color">#274F31</color>
     <color name="dark_sec_color">#397249</color>
+
+    <color name="splash_background">#121212</color>
+    <color name="ic_launcher_background">#121212</color>
 </resources>
