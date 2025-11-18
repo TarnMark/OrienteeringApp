@@ -98,6 +98,11 @@ dependencies {
     // QR code
     implementation(libs.core)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.01"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
 
     //implementation("androidx.room:room-paging:$room_version")
+    implementation(kotlin("test"))
 }
