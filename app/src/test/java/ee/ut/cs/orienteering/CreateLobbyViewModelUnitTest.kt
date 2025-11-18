@@ -1,10 +1,13 @@
-package ee.ut.cs.orienteering.ui.viewmodels
+package ee.ut.cs.orienteering
 
 import android.app.Application
 import ee.ut.cs.orienteering.data.FakeQuestDao
 import ee.ut.cs.orienteering.data.Quest
+import ee.ut.cs.orienteering.ui.viewmodels.CreateLobbyViewModel
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.*
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -18,7 +21,7 @@ import org.junit.Test
  *   - has length 5,
  *   - consists only of A–Z and 0–9 characters.
  */
-class CreateLobbyViewModelTest {
+class CreateLobbyViewModelUnitTest {
 
     private lateinit var viewModel: CreateLobbyViewModel
     private lateinit var fakeDao: FakeQuestDao

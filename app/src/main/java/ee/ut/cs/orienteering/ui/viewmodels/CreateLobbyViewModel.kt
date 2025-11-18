@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class CreateLobbyViewModel : AndroidViewModel {
+open class CreateLobbyViewModel : AndroidViewModel {
 
     private val questDao: QuestDao
     constructor(application: Application) : super(application) {
@@ -21,7 +21,7 @@ class CreateLobbyViewModel : AndroidViewModel {
         this.questDao = questDao
     }
 
-    fun createLobby(title: String, codeInput: String?, onCreated: (Int) -> Unit) {
+    open fun createLobby(title: String, codeInput: String?, onCreated: (Int) -> Unit) {
         viewModelScope.launch {
             val finalCode = withContext(Dispatchers.IO) { ensureUniqueCode(codeInput) }
             val id = withContext(Dispatchers.IO) {
