@@ -18,10 +18,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Fast and Curious"
+        android:text="Fast &amp; \n      Curious"
+        android:lineHeight="46dp"
+        android:letterSpacing="0.04"
         android:textColor="#FF6F00"
         android:textStyle="bold"
-        android:textSize="22sp"
-        android:fontFamily="sans-serif-medium" />
+        android:textSize="54sp"
+        android:fontFamily="@font/russoone" />
 
 </LinearLayout>

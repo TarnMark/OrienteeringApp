@@ -17,8 +17,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ee.ut.cs.orienteering.R
 import ee.ut.cs.orienteering.ui.components.QuestionRow
@@ -32,18 +32,23 @@ fun QuestionsScreen(questId: Int, viewModel: QuestionsViewModel = viewModel()) {
     val answers by viewModel.answers.collectAsState()
     var showAdd by remember { mutableStateOf(false) }
 
+    val buttonPadding = dimensionResource(id = R.dimen.floating_act_button_padding)
+
     Scaffold(
         topBar = { CenterAlignedTopAppBar(title = { Text(stringResource(R.string.lobby_questions_title, questId)) }) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAdd = true },
-                modifier = Modifier.padding(bottom = 80.dp)
+                modifier = Modifier.padding(bottom = buttonPadding)
             ) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.btn_add_question))
             }
         }
     ) { innerPadding ->
-        Column(Modifier.padding(innerPadding).padding(12.dp)) {
+        val screenPadding = dimensionResource(id = R.dimen.screen_padding)
+        val rowPadding = dimensionResource(id = R.dimen.text_row_padding)
+
+        Column(Modifier.padding(innerPadding).padding(screenPadding)) {
             if (questions.isEmpty()) {
                 Text(stringResource(R.string.no_questions))
             } else {
@@ -55,7 +60,7 @@ fun QuestionsScreen(questId: Int, viewModel: QuestionsViewModel = viewModel()) {
                             answerText = answers[q.id] ?: "",
                             onCheckedToggle = { viewModel.toggleChecked(q.id) },
                             onAnswerChanged = { viewModel.updateAnswer(q.id, it) },
-                            modifier = Modifier.padding(vertical = 6.dp)
+                            modifier = Modifier.padding(vertical = rowPadding)
                         )
                     }
                 }

@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -244,6 +246,14 @@ fun MapScreen(
     val showLeaveDialog = remember { mutableStateOf(false) }
     val showQrDialog = remember { mutableStateOf(false) }
 
+    val isDark = isSystemInDarkTheme()
+
+    val sheetHeight = dimensionResource(id = R.dimen.sheet_height_collapsed)
+    val iconPadding = dimensionResource(id = R.dimen.icon_padding)
+    val roundedCorners = dimensionResource(id = R.dimen.rounded_corners)
+    val qrSize = dimensionResource(id = R.dimen.qr_size)
+    val rowSpacing = dimensionResource(id = R.dimen.column_row_spacing)
+    val columnPadding = dimensionResource(id = R.dimen.column_padding)
 
     // Disable back navigation
     BackHandler {}
@@ -292,7 +302,7 @@ fun MapScreen(
 
             }
         },
-        sheetPeekHeight = 150.dp, // visible when collapsed
+        sheetPeekHeight = sheetHeight, // visible when collapsed
         sheetDragHandle = {
             BottomSheetDefaults.DragHandle()
         }
@@ -325,7 +335,7 @@ fun MapScreen(
                 onClick = { showQrDialog.value = true },
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(10.dp)
+                    .padding(iconPadding)
                     .background(colors.primary)
             ) {
                 Icon(Icons.Default.QrCode,
@@ -344,28 +354,32 @@ fun MapScreen(
                     onClick = {
                         showLeaveDialog.value = false
                         navController.popBackStack()
-                    }
+                    },
+                    colors = if (isDark) ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary) else ButtonDefaults.textButtonColors()
                 ) { Text("Leave") }
             },
             dismissButton = {
-                TextButton(onClick = { showLeaveDialog.value = false }) { Text("Cancel") }
+                TextButton(
+                    onClick = { showLeaveDialog.value = false },
+                    colors = if (isDark) ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary) else ButtonDefaults.textButtonColors()
+                ) { Text("Cancel") }
             }
         )
     }
     if (showQrDialog.value) {
         Dialog(onDismissRequest = { showQrDialog.value = false }) {
             Surface(
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(roundedCorners),
                 tonalElevation = 4.dp,
                 color = MaterialTheme.colorScheme.surface
             ) {
                 Column(
-                    modifier = Modifier.padding(24.dp),
+                    modifier = Modifier.padding(columnPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text("Quest QR Code", style = MaterialTheme.typography.titleLarge)
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(rowSpacing))
 
                     val qrBitmap by produceState<Bitmap?>(initialValue = null, key1 = quest?.id) {
                         quest?.let { value = questionsViewModel.generateQuestQrBitmap(it) }
@@ -375,10 +389,10 @@ fun MapScreen(
                         Image(
                             bitmap = qrBitmap!!.asImageBitmap(),
                             contentDescription = "Quest QR",
-                            modifier = Modifier.size(250.dp)
+                            modifier = Modifier.size(qrSize)
                         )
 
-                        Spacer(Modifier.height(16.dp))
+                        Spacer(Modifier.height(rowSpacing))
 
                         Button(onClick = {
                             questionsViewModel.saveQrToGallery(qrBitmap!!)

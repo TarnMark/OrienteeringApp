@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -49,6 +50,11 @@ fun QuestionRow(
     }
     val animatedBackground by animateColorAsState(targetValue = backgroundColor)
 
+    val textRowPadding = dimensionResource(id = R.dimen.text_row_padding)
+    val questionSpacing = dimensionResource(id = R.dimen.text_field_question_spacing)
+    val columnPaddingH = dimensionResource(id = R.dimen.column_padding_horizontal)
+    val columnPaddingV = dimensionResource(id = R.dimen.column_padding_vertical)
+
 
     Column(
         modifier = modifier
@@ -57,7 +63,7 @@ fun QuestionRow(
             .animateContentSize()
             .clickable { isExpanded = !isExpanded }
             .background(animatedBackground)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = columnPaddingH, vertical = columnPaddingV)
     ) {
         Row(
             modifier = Modifier
@@ -68,7 +74,7 @@ fun QuestionRow(
                 text = question.questionText,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 8.dp),
+                    .padding(end = textRowPadding),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     textDecoration = if (isChecked) TextDecoration.LineThrough else TextDecoration.None
                 ),
@@ -86,7 +92,7 @@ fun QuestionRow(
 
         // Expanded answer input field
         if (isExpanded) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(questionSpacing))
             TextField(
                 value = answerText,
                 onValueChange =  onAnswerChanged ,

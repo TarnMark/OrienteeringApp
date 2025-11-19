@@ -26,8 +26,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ee.ut.cs.orienteering.R
@@ -39,6 +39,10 @@ fun JoinLobbyScreen(
     navController: NavController,
     viewModel: JoinLobbyViewModel = viewModel()
 ) {
+    val buttonSpacing = dimensionResource(id = R.dimen.button_spacing)
+    val textTitleSpacing = dimensionResource(id = R.dimen.text_field_title_spacing)
+    val errorHeight = dimensionResource(id = R.dimen.error_message_height)
+
     val state by viewModel.state.collectAsState()
     var code by remember { mutableStateOf("") }
     val colors = MaterialTheme.colorScheme
@@ -72,7 +76,7 @@ fun JoinLobbyScreen(
         ) {
             Text(stringResource(R.string.enter_lobby_code), style = MaterialTheme.typography.titleMedium)
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(textTitleSpacing))
 
             OutlinedTextField(
                 value = code,
@@ -81,7 +85,7 @@ fun JoinLobbyScreen(
                 singleLine = true
             )
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(buttonSpacing))
 
             Button(
                 onClick = {
@@ -95,7 +99,7 @@ fun JoinLobbyScreen(
             }
 
             state.errorMessage?.let {
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(errorHeight))
                 Text(it, color = MaterialTheme.colorScheme.error)
             }
 
