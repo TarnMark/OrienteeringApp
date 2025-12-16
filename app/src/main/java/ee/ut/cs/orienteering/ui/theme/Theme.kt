@@ -28,22 +28,23 @@ private val LightColorScheme = lightColorScheme(
     tertiary = AccentLight,
 
     background = LightBackground,
-//    surface = LightSurface,
 
     onPrimary = TextOnLight,
     onSecondary = TextOnLight
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
 )
 
+/**
+ * App-wide Material 3 theme wrapper for the Orienteering application.
+ *
+ * Behavior:
+ * - Chooses between light and dark color schemes based on [darkTheme] or the system setting.
+ * - Optionally enables dynamic colors on Android 12+ when [dynamicColor] is true.
+ * - Applies the app's [Typography] and the resolved [colorScheme] to all nested composables.
+ *
+ * @param darkTheme Whether to use the dark color scheme. Defaults to the system setting.
+ * @param dynamicColor Whether to enable Material You dynamic colors (Android 12+ only).
+ * @param content The composable content that will be styled by this theme.
+ */
 @Composable
 fun OrienteeringTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

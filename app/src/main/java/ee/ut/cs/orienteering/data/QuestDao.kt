@@ -9,6 +9,17 @@ import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Data Access Object (DAO) for performing CRUD operations on [Quest] entities.
+ *
+ * Responsibilities:
+ * - Insert, update, and delete quests
+ * - Query quests by ID or join code
+ * - Retrieve quests together with their related questions
+ * - Provide reactive streams via [Flow] for observing database changes
+ *
+ * This DAO operates on the `quests_table` defined in [Quest].
+ */
 @Dao
 interface QuestDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -5,7 +5,14 @@ import androidx.room.Relation
 import kotlinx.serialization.Serializable
 
 /**
- * A data class to hold the relationship between a Quest and its list of Questions.
+ * Combined data model representing a [Quest] and all of its associated [Question]s.
+ *
+ * This class is used by Room to load relational data using:
+ * - [@Embedded] to include the parent [Quest] fields directly
+ * - [@Relation] to fetch all [Question] entities whose `questId` matches the quest's `id`
+ *
+ * It is annotated with `@Serializable` so it can be included in import/export
+ * operations (e.g., JSON bundles or QR‑based transfers).
  */
 @Serializable
 data class QuestWithQuestions(

@@ -29,6 +29,25 @@ import ee.ut.cs.orienteering.R
 import ee.ut.cs.orienteering.ui.components.QuestionRow
 import ee.ut.cs.orienteering.ui.viewmodels.QuestionsViewModel
 
+/**
+ * Displays the list of questions for a specific quest and allows adding new questions.
+ *
+ * UI structure:
+ * - A centered top app bar showing the quest ID
+ * - A floating action button for adding a new question
+ * - A scrollable list of existing questions
+ *
+ * Behavior:
+ * - Observes questions, checked states, and answers from [QuestionsViewModel].
+ * - Each question is displayed using [QuestionRow], allowing:
+ *   - Toggling the checked state
+ *   - Editing the answer text
+ * - When the FAB is pressed, an [AddQuestionDialog] is shown.
+ * - Submitting the dialog adds a new question to the quest.
+ *
+ * @param questId The ID of the quest whose questions should be displayed.
+ * @param viewModel The [QuestionsViewModel] providing question data and update logic.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuestionsScreen(questId: Int, viewModel: QuestionsViewModel = viewModel()) {
@@ -82,7 +101,18 @@ fun QuestionsScreen(questId: Int, viewModel: QuestionsViewModel = viewModel()) {
 }
 
 
-
+/**
+ * Dialog for adding a new question to a quest.
+ *
+ * Behavior:
+ * - Allows the user to enter question text.
+ * - The confirm button is enabled only when the text is not blank.
+ * - On confirmation, calls [onConfirm] with the entered text.
+ * - On dismissal, calls [onDismiss].
+ *
+ * @param onDismiss Callback invoked when the dialog is dismissed.
+ * @param onConfirm Callback invoked with the new question text when the user confirms.
+ */
 @Composable
 private fun AddQuestionDialog(
     onDismiss: () -> Unit,

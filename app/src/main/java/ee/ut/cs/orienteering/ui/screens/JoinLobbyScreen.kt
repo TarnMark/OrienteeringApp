@@ -33,6 +33,27 @@ import androidx.navigation.NavController
 import ee.ut.cs.orienteering.R
 import ee.ut.cs.orienteering.ui.viewmodels.JoinLobbyViewModel
 
+/**
+ * Screen for joining an existing lobby by entering a lobby code.
+ *
+ * UI structure:
+ * - Top app bar with a back button
+ * - Text field for entering a lobby code
+ * - Join button that triggers the join flow
+ * - Optional error message displayed below the button
+ *
+ * Behavior:
+ * - The Join button is enabled only when:
+ *   - The lobby code is not blank
+ *   - The view model is not currently loading
+ * - When the Join button is pressed:
+ *   - [JoinLobbyViewModel.joinLobby] is invoked
+ *   - On success, navigation proceeds to the map screen in non‑editable mode
+ * - If an error occurs, the error message from the state is displayed.
+ *
+ * @param navController The [NavController] used to navigate after a successful join.
+ * @param viewModel The [JoinLobbyViewModel] providing state and join logic.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JoinLobbyScreen(

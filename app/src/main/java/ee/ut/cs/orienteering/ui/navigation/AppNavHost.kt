@@ -12,6 +12,24 @@ import ee.ut.cs.orienteering.ui.screens.JoinLobbyScreen
 import ee.ut.cs.orienteering.ui.screens.MapScreen
 import ee.ut.cs.orienteering.ui.screens.QuestionsScreen
 
+/**
+ * Application-wide navigation host defining all composable destinations.
+ *
+ * This function sets up the navigation graph for the app, including:
+ * - Static screens (home, about, join lobby, create lobby)
+ * - Parameterized routes (map, questions)
+ *
+ * Route formats:
+ * - `"map/{editable}/{questId}"`
+ *   - `editable`: `"true"` or `"false"`
+ *   - `questId`: Integer quest identifier
+ *
+ * - `"questions/{questId}"`
+ *   - `questId`: Integer quest identifier
+ *
+ * @param navController The [NavHostController] used to navigate between screens.
+ * @param modifier Optional [Modifier] for layout customization.
+ */
 @Composable
 fun AppNavHost(
     navController: NavHostController,
@@ -33,4 +51,5 @@ fun AppNavHost(
             val questId = backStackEntry.arguments?.getString("questId")?.toInt() ?: 0
             QuestionsScreen(questId = questId)
         }
-    }}
+    }
+}

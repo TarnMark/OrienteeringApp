@@ -34,7 +34,25 @@ import androidx.navigation.NavController
 import ee.ut.cs.orienteering.R
 import ee.ut.cs.orienteering.ui.viewmodels.CreateLobbyViewModel
 
-
+/**
+ * Screen for creating a new lobby (quest) within the application.
+ *
+ * UI structure:
+ * - Top app bar with a back button
+ * - Text fields for lobby title and optional lobby code
+ * - Button to create the lobby
+ *
+ * Behavior:
+ * - The user must enter a non‑blank lobby title to enable the Create button.
+ * - When the Create button is pressed:
+ *   - A loading state is shown
+ *   - [CreateLobbyViewModel.createLobby] is invoked
+ *   - On success, navigation proceeds to the map editor screen for the new quest
+ * - The system back button and the top bar back button both navigate back.
+ *
+ * @param navController The [NavController] used to navigate after lobby creation.
+ * @param viewModel The [CreateLobbyViewModel] responsible for creating the lobby.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateLobbyScreen(
@@ -46,6 +64,7 @@ fun CreateLobbyScreen(
     var isCreating by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
 
+    // Handle system back button
     BackHandler { navController.popBackStack() }
 
     Scaffold(

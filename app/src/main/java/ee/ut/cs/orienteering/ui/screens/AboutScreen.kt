@@ -27,6 +27,20 @@ import androidx.navigation.NavController
 import ee.ut.cs.orienteering.R
 import ee.ut.cs.orienteering.ui.viewmodels.AboutViewModel
 
+/**
+ * Displays the "About" screen containing team information and a description
+ * of the application's core features.
+ *
+ * UI structure:
+ * - A top app bar with a back button
+ * - A scrollable column of text describing the team and app functionality
+ *
+ * Behavior:
+ * - Pressing the back button triggers [AboutViewModel.onBackClicked] to navigate back.
+ *
+ * @param navController The [NavController] used for navigation actions.
+ * @param viewModel The [AboutViewModel] handling back navigation logic.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(

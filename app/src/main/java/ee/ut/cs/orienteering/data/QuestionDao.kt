@@ -7,6 +7,16 @@ import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Data Access Object (DAO) for performing CRUD and query operations
+ * on [Question] entities stored in the `questions_table`.
+ *
+ * Responsibilities:
+ * - Insert, update, and delete individual questions
+ * - Retrieve questions by ID or by their parent quest
+ * - Provide reactive streams via [Flow] for observing question lists
+ * - Support bulk insertion and counting operations
+ */
 @Dao
 interface QuestionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -38,8 +48,4 @@ interface QuestionDao {
 
     @Query("SELECT COUNT(*) FROM questions_table WHERE questId = :questId")
     suspend fun countForQuest(questId: Int): Int
-
-
-
-
 }

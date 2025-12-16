@@ -5,7 +5,6 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,56 +15,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import ee.ut.cs.orienteering.data.AppDatabase
-import ee.ut.cs.orienteering.data.Quest
-import ee.ut.cs.orienteering.data.Question
 import ee.ut.cs.orienteering.ui.navigation.AppNavHost
 import ee.ut.cs.orienteering.ui.theme.OrienteeringTheme
 import ee.ut.cs.orienteering.ui.viewmodels.JoinLobbyViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * Main entry point of the application.
+ *
+ * Handles:
+ * - Processing QR-code deep links for quest import
+ * - Setting up the main UI content
+ */
 class MainActivity : ComponentActivity() {
+
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState Previously saved stat, or `null` if none exists.
+     *
+     * Initializes the UI and processes any incoming QR import requests.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val prefs = getSharedPreferences("seed_prefs", MODE_PRIVATE)
-        val done = prefs.getBoolean("seed_done_v1", false)
-
-        if (!done) {
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    val db = AppDatabase.getDatabase(this@MainActivity)
-                    val qDao = db.questionDao()
-                    val questDao = db.questDao()
-
-                    val questId =
-                        if (questDao.count() == 0) {
-                            questDao.insert(
-                                Quest(
-                                    id = 0,
-                                    title = "Sample Quest",
-                                    code = "demo"
-                                )
-                            ).toInt()
-                        } else 0
-
-                    if (qDao.count() == 0) {
-                        val sample = listOf(
-                            Question(0, questId, "What color is the flower pot?", "red", "58.384785, 26.721060"),
-                            Question(0, questId, "How many computers can you see?", "17", "58.385501,26.725032"),
-                            Question(0, questId, "What year was it built?", "2031", "58.380662, 26.725357"),
-                            Question(0, questId, "How many zebra stripes?", "11", "58.377636, 26.729277"),
-                            Question(0, questId, "Whose monument?", "Eduard Tubin", "58.376659, 26.725145")
-                        )
-                        qDao.insertAll(sample)
-                    }
-
-                } catch (t: Throwable) {
-                    Log.e("DB_SEED", "Seed failed", t)
-                }
-            }
-        }
 
         handleQrImportIntent(intent)
 
@@ -76,6 +48,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * Called when the activity receives a new intent while already running.
+     *
+     * @param intent The new intent delivered to the activity.
+     *
+     * Used to handle QR-code deep links when the activity is already in memory.
+     */
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleQrImportIntent(intent)
@@ -83,6 +62,18 @@ class MainActivity : ComponentActivity() {
 
 
     private val joinLobbyViewModel: JoinLobbyViewModel by viewModels()
+
+    /**
+     * Processes a QR-code deep link intent and attempts to import a quest.
+     *
+     * Expected URI format:
+     * `qrexport://quest?data=<base64-json>`
+     *
+     * @param intent The incoming intent that may contain a QR deep link.
+     *
+     * @throws IllegalArgumentException If the Base64 data is malformed.
+     * @throws Exception If quest import fails inside [JoinLobbyViewModel.importQuestFromJson].
+     */
     private fun handleQrImportIntent(intent: Intent?) {
         val uri = intent?.data ?: return
         if (uri.scheme == "qrexport" && uri.host == "quest") {
@@ -112,6 +103,12 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    /**
+     * Root composable for the application's navigation structure.
+     *
+     * Sets up the navigation host and provides padding from the Scaffold.
+    */
     @Composable
     fun MainScreen() {
         val navController = rememberNavController()

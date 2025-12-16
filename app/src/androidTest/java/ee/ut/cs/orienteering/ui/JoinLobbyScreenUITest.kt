@@ -23,6 +23,23 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import kotlin.test.assertEquals
 
+/**
+ * UI tests for the Join Lobby screen.
+ *
+ * Purpose:
+ * - Verifies that entering a valid lobby code and tapping the "Join" button
+ *   navigates to the map screen with the correct quest ID.
+ * - Verifies that entering an invalid code displays an appropriate error message.
+ * - Uses [FakeJoinLobbyViewModel] to simulate both success and failure scenarios
+ *   without touching the real database.
+ * - Uses a [TestNavHostController] to assert navigation behavior.
+ *
+ * Test flow:
+ * 1. Render the JoinLobbyScreen inside a test NavHost
+ * 2. Enter a lobby code into the text field
+ * 3. Click the "Join" button
+ * 4. Assert navigation or error state depending on the fake DAO configuration
+ */
 @RunWith(AndroidJUnit4::class)
 class JoinLobbyScreenUITest {
 
@@ -31,6 +48,9 @@ class JoinLobbyScreenUITest {
 
     private lateinit var navController: TestNavHostController
 
+    /**
+     * Sets up the Compose content with a test NavHost and the provided fake ViewModel.
+     */
     private fun setContent(fakeViewModel: FakeJoinLobbyViewModel) {
         val application = ApplicationProvider.getApplicationContext<Application>()
         navController = TestNavHostController(application).apply {
@@ -53,6 +73,10 @@ class JoinLobbyScreenUITest {
         }
     }
 
+    /**
+     * Ensures that when the user enters a valid lobby code and taps the join button,
+     * the screen navigates to the map route with the expected quest ID.
+     */
     @Test
     fun givenValidCode_whenJoinLobbyClicked_thenNavigatesToMap() {
         val fakeViewModel = FakeJoinLobbyViewModel(
@@ -74,6 +98,10 @@ class JoinLobbyScreenUITest {
         }
     }
 
+    /**
+     * Ensures that when the user enters an invalid lobby code,
+     * an error message is displayed instead of navigating.
+     */
     @Test
     fun givenInvalidCode_whenJoinLobbyClicked_thenShowsErrorMessage() {
         val fakeViewModel = FakeJoinLobbyViewModel(

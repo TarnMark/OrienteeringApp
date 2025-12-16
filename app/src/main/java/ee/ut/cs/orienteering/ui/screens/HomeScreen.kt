@@ -28,6 +28,23 @@ import androidx.navigation.NavController
 import ee.ut.cs.orienteering.R
 import ee.ut.cs.orienteering.ui.viewmodels.HomeViewModel
 
+/**
+ * Displays the main home screen of the application.
+ *
+ * UI structure:
+ * - A top app bar showing the app name and an About button
+ * - Two primary actions centered on the screen:
+ *   - Create Lobby
+ *   - Join Lobby
+ *
+ * Behavior:
+ * - Tapping "Create Lobby" triggers [HomeViewModel.onCreateLobbyClicked] to navigate to the lobby creation flow.
+ * - Tapping "Join Lobby" triggers [HomeViewModel.onJoinLobbyClicked] to navigate to the lobby join screen.
+ * - Tapping the info icon in the top bar triggers [HomeViewModel.onAboutClicked] to open the About screen.
+ *
+ * @param navController The [NavController] used to navigate between screens.
+ * @param viewModel The [HomeViewModel] handling navigation logic for this screen.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(

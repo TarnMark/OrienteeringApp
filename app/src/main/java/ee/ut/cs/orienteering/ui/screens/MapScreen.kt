@@ -85,7 +85,27 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 
-
+/**
+ * Displays an interactive OSMDroid map inside a Compose UI and renders question markers
+ * associated with a specific quest.
+ *
+ * Features:
+ * - **Single tap:** triggers a weather lookup via [onWeatherTrigger].
+ * - **Long press (editable mode only):** opens a dialog to add a new question at the pressed location.
+ * - **Markers:** each question is shown as a numbered marker on the map.
+ * - **Marker click:** scrolls the question list (via [listState]) to the corresponding item.
+ *
+ * Dialog behavior:
+ * - When the user long‑presses in editable mode, a dialog appears allowing them to enter
+ *   question text and an answer. Submitting the dialog calls
+ *   [QuestionsViewModel.addQuestion] with the selected coordinates.
+ *
+ * @param onWeatherTrigger Callback invoked when the user taps the map. Receives the tapped [GeoPoint].
+ * @param questionsViewModel The [QuestionsViewModel] providing question data and add‑question logic.
+ * @param listState The [LazyListState] used to scroll the question list when a marker is tapped.
+ * @param questId The ID of the quest whose questions should be displayed on the map.
+ * @param editable Whether long‑pressing the map should allow adding new questions.
+ */
 @Composable
 fun OSMDroidMapView(
     onWeatherTrigger: (GeoPoint) -> Unit,
@@ -104,6 +124,8 @@ fun OSMDroidMapView(
 
     val showAddDialog = remember { mutableStateOf(false) }
     val addingPoint = remember { mutableStateOf("") }
+
+    // Dialog for adding a new question
     if (showAddDialog.value) {
         var text by remember { mutableStateOf("") }
         var answer by remember { mutableStateOf("") }
@@ -217,6 +239,39 @@ fun OSMDroidMapView(
     )
 }
 
+/**
+ * Displays the main map screen for a specific quest, combining:
+ * - An interactive OSMDroid map
+ * - A bottom sheet containing the list of questions
+ * - Weather information for tapped map locations
+ * - QR code generation for sharing the quest
+ * - A leave‑lobby confirmation dialog
+ *
+ * Key behaviors:
+ * - **Map interactions:**
+ *   - Single tap triggers a weather lookup via [WeatherViewModel.loadWeather].
+ *   - Long press (when `editable` is true) allows adding new questions.
+ *
+ * - **Bottom sheet:**
+ *   - Shows the list of questions for the quest.
+ *   - Collapsible, with a configurable peek height.
+ *
+ * - **QR code dialog:**
+ *   - Generates a QR code for the quest using [QuestionsViewModel.generateQuestQrBitmap].
+ *   - Allows saving the QR code to the device gallery.
+ *
+ * - **Leave dialog:**
+ *   - Confirms whether the user wants to exit the lobby.
+ *   - On confirmation, navigates back using [NavController.popBackStack].
+ *
+ * - **Weather display:**
+ *   - Weather text is shown in the top‑right corner of the map.
+ *
+ * @param navController The [NavController] used for navigation actions.
+ * @param questionsViewModel The [QuestionsViewModel] providing question data and QR generation.
+ * @param questId The ID of the quest whose map and questions should be displayed.
+ * @param editable Whether the user is allowed to add new questions via long‑press on the map.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
@@ -404,7 +459,23 @@ fun MapScreen(
 
 }
 
-
+/**
+ * Displays the list of questions for a given quest.
+ *
+ * Behavior:
+ * - Observes the question list, checked states, and answer states from [QuestionsViewModel].
+ * - If no questions exist, shows a placeholder text.
+ * - Otherwise displays a scrollable list of [QuestionRow] items.
+ * - Each row:
+ *   - Shows the question text
+ *   - Allows toggling the checked state
+ *   - Allows editing the answer text
+ * - Clicking a marker on the map scrolls this list using [listState].
+ *
+ * @param viewModel The [QuestionsViewModel] providing questions, checked states, and answers.
+ * @param listState The [LazyListState] used for programmatic scrolling from the map.
+ * @param questId The ID of the quest whose questions should be displayed.
+ */
 @Composable
 fun QuestionsList(
     viewModel: QuestionsViewModel,
@@ -453,7 +524,21 @@ fun QuestionsList(
 }
 
 
-// function for drawing the question number icons
+/**
+ * Creates a circular numbered marker drawable used for map question markers.
+ *
+ * The marker consists of:
+ * - A filled circle using [primaryColor]
+ * - A centered bold number using [onPrimaryColor]
+ *
+ * @param context The Android context used to access resources.
+ * @param number The number to display inside the marker (e.g., question ID).
+ * @param primaryColor The background circle color.
+ * @param onPrimaryColor The text color used for the number.
+ * @param size The width/height of the drawable in pixels (default: 64).
+ *
+ * @return A [Drawable] representing the numbered marker.
+ */
 fun createNumberMarkerDrawable(
     context: Context,
     number: Int,
