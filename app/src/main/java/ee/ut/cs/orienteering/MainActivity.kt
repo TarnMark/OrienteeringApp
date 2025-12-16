@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,11 +29,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // val questions = SeedLoader.loadQuestions(this)
-        //val checkpoints = SeedLoader.loadCheckpoints(this)
-
-        //Log.d("TEST", "Questions loaded: ${questions.size}")
-        //Log.d("TEST", "Checkpoints loaded: ${checkpoints.size}")
         val prefs = getSharedPreferences("seed_prefs", MODE_PRIVATE)
         val done = prefs.getBoolean("seed_done_v1", false)
 
@@ -43,7 +39,6 @@ class MainActivity : ComponentActivity() {
                     val qDao = db.questionDao()
                     val questDao = db.questDao()
 
-//                    questDao.deleteAll()
                     val questId =
                         if (questDao.count() == 0) {
                             questDao.insert(
@@ -55,8 +50,6 @@ class MainActivity : ComponentActivity() {
                             ).toInt()
                         } else 0
 
-                    // for resetting the questions
-                    //qDao.deleteAll()
                     if (qDao.count() == 0) {
                         val sample = listOf(
                             Question(0, questId, "What color is the flower pot?", "red", "58.384785, 26.721060"),
@@ -69,7 +62,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                 } catch (t: Throwable) {
-                    android.util.Log.e("DB_SEED", "Seed failed", t)
+                    Log.e("DB_SEED", "Seed failed", t)
                 }
             }
         }
@@ -91,7 +84,6 @@ class MainActivity : ComponentActivity() {
 
     private val joinLobbyViewModel: JoinLobbyViewModel by viewModels()
     private fun handleQrImportIntent(intent: Intent?) {
-//        Log.d("QR import", "Accepted package: " + (intent?.toString()))
         val uri = intent?.data ?: return
         if (uri.scheme == "qrexport" && uri.host == "quest") {
             val base64 = uri.getQueryParameter("data") ?: return
@@ -110,7 +102,7 @@ class MainActivity : ComponentActivity() {
                         Toast.LENGTH_LONG
                     ).show()
 
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     Toast.makeText(
                         this@MainActivity,
                         "Failed to import quest",
@@ -124,9 +116,7 @@ class MainActivity : ComponentActivity() {
     fun MainScreen() {
         val navController = rememberNavController()
 
-        Scaffold(
-            //bottomBar = { NavigationBar(navController) }
-        ) { innerPadding ->
+        Scaffold { innerPadding ->
             AppNavHost(navController = navController, modifier = Modifier.padding(innerPadding))
         }
     }}

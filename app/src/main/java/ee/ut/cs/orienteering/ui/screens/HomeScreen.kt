@@ -36,7 +36,6 @@ fun HomeScreen(
 ) {
     val colors = MaterialTheme.colorScheme
 
-    val screenPadding = dimensionResource(id = R.dimen.screen_padding)
     val buttonHeight = dimensionResource(id = R.dimen.button_height)
     val buttonSpacing = dimensionResource(id = R.dimen.button_spacing)
 

@@ -72,8 +72,6 @@ import ee.ut.cs.orienteering.data.Quest
 import ee.ut.cs.orienteering.data.network.RetrofitInstance
 import ee.ut.cs.orienteering.data.network.WeatherRepository
 import ee.ut.cs.orienteering.ui.components.QuestionRow
-import ee.ut.cs.orienteering.ui.viewmodels.JoinLobbyViewModel
-import ee.ut.cs.orienteering.ui.viewmodels.MapViewModel
 import ee.ut.cs.orienteering.ui.viewmodels.QuestionsViewModel
 import ee.ut.cs.orienteering.ui.viewmodels.WeatherViewModel
 import ee.ut.cs.orienteering.ui.viewmodels.WeatherViewModelFactory
@@ -223,9 +221,7 @@ fun OSMDroidMapView(
 @Composable
 fun MapScreen(
     navController: NavController,
-    viewModel: MapViewModel = viewModel(),
     questionsViewModel: QuestionsViewModel = viewModel(),
-    questsViewModel: JoinLobbyViewModel = viewModel(),
     questId: Int,
     editable: Boolean = false
 ) {

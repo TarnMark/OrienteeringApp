@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.provider.MediaStore
 import android.util.Base64
-import android.util.Log
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.set
 import androidx.lifecycle.AndroidViewModel
@@ -18,10 +17,8 @@ import ee.ut.cs.orienteering.data.Quest
 import ee.ut.cs.orienteering.data.QuestWithQuestions
 import ee.ut.cs.orienteering.data.Question
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -32,11 +29,7 @@ class QuestionsViewModel(app: Application) : AndroidViewModel(app) {
     private val dao = AppDatabase.getDatabase(app).questionDao()
 
     fun questionsForQuest(questId: Int) =
-        dao.getQuestionsForQuest(questId) // Flow<List<Question>>
-
-    fun questionsForQuestState(questId: Int): StateFlow<List<Question>> =
         dao.getQuestionsForQuest(questId)
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     fun addQuestion(text: String, questId: Int, location: String = "") {
         viewModelScope.launch {
@@ -64,32 +57,6 @@ class QuestionsViewModel(app: Application) : AndroidViewModel(app) {
     fun toggleChecked(questionId: Int) {
         _checked.value = _checked.value.toMutableSet().apply {
             if (contains(questionId)) remove(questionId) else add(questionId)
-        }
-    }
-
-    fun loadQuestionsFromApi(lobbyId: Int) {
-        viewModelScope.launch {
-            try {
-                val response = listOf(
-                    Question(1, lobbyId, "What is Kotlin?", "", ""),
-                    Question(2, lobbyId, "What is Jetpack Compose?", "", "")
-                )
-                response.forEach { dao.insert(it) }
-            } catch (e: Exception) {
-                Log.e("QuestionsViewModel", "API error: ${e.message}")
-            }
-        }
-    }
-    fun addQuestionWithLocation(text: String, questId: Int, location: String) {
-        viewModelScope.launch {
-            val newQuestion = Question(
-                id = 0,
-                questId = questId,
-                questionText = text,
-                answer = "",
-                location = location
-            )
-            dao.insert(newQuestion)
         }
     }
 
