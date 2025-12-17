@@ -1,5 +1,6 @@
 package ee.ut.cs.orienteering.ui.screens
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,10 +12,12 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -59,7 +62,8 @@ fun QuestionsScreen(questId: Int, viewModel: QuestionsViewModel = viewModel()) {
     val buttonPadding = dimensionResource(id = R.dimen.floating_act_button_padding)
 
     Scaffold(
-        topBar = { CenterAlignedTopAppBar(title = { Text(stringResource(R.string.lobby_questions_title, questId)) }) },
+        topBar = {
+            CenterAlignedTopAppBar(title = { Text(stringResource(R.string.lobby_questions_title, questId)) }) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAdd = true },
@@ -121,12 +125,24 @@ private fun AddQuestionDialog(
     var text by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.btn_add_question)) },
+        title = {
+            Text(stringResource(R.string.btn_add_question)) },
         text = {
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it },
-                label = { Text(stringResource(R.string.question_text)) }
+                label = { Text(stringResource(R.string.question_text)) },
+                colors = if (isSystemInDarkTheme()) {
+                    OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                        focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                    )
+                } else {
+                    OutlinedTextFieldDefaults.colors()
+                }
             )
         },
         confirmButton = {
@@ -136,7 +152,9 @@ private fun AddQuestionDialog(
             ) { Text(stringResource(R.string.btn_add)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.btn_cancel)) }
-        }
+            TextButton(
+                onClick = onDismiss,
+            ) { Text(stringResource(R.string.btn_cancel)) }
+        },
     )
 }

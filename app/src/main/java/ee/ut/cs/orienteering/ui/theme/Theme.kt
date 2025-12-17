@@ -17,9 +17,17 @@ private val DarkColorScheme = darkColorScheme(
 
     background = DarkBackground,
     surface = DarkSurface,
+    surfaceVariant = AccentDark,
+    secondaryContainer = SecondaryDark.copy(alpha = 0.5f),
+
+    outline = TextOnDark,
 
     onPrimary = OnPrimaryDark,
-    onSecondary = TextOnDark
+    onSecondary = TextOnDark,
+    onSurface = TextOnDark,
+    onBackground = TextOnDark,
+    onSurfaceVariant = TextOnDark,
+    onSecondaryContainer = TextOnDark,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -28,9 +36,15 @@ private val LightColorScheme = lightColorScheme(
     tertiary = AccentLight,
 
     background = LightBackground,
+    surface = LightSurface,
+    surfaceVariant = AccentLight,
+    secondaryContainer = SecondaryLight.copy(alpha = 0.4f),
 
     onPrimary = TextOnLight,
-    onSecondary = TextOnLight
+    onSecondary = TextOnLight,
+    onSurface = TextOnLight,
+    onSurfaceVariant = TextOnLight,
+    onBackground = TextOnLight
 )
 
 /**

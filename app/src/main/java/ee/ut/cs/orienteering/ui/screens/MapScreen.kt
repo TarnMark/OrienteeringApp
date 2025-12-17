@@ -37,6 +37,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -124,6 +125,7 @@ fun OSMDroidMapView(
 
     val showAddDialog = remember { mutableStateOf(false) }
     val addingPoint = remember { mutableStateOf("") }
+    val isDark = isSystemInDarkTheme()
 
     // Dialog for adding a new question
     if (showAddDialog.value) {
@@ -139,13 +141,35 @@ fun OSMDroidMapView(
                         value = text,
                         onValueChange = { text = it },
                         label = { Text("Question text") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = if (isSystemInDarkTheme()) {
+                            OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                                focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                            )
+                        } else {
+                            OutlinedTextFieldDefaults.colors()
+                        }
                     )
                     OutlinedTextField(
                         value = answer,
                         onValueChange = { answer = it },
                         label = { Text("Question answer") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = if (isSystemInDarkTheme()) {
+                            OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                                focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                            )
+                        } else {
+                            OutlinedTextFieldDefaults.colors()
+                        }
                     )
                 }
             },
@@ -155,11 +179,15 @@ fun OSMDroidMapView(
                         questionsViewModel.addQuestion(text.trim(), questId, addingPoint.value)
                         showAddDialog.value = false
                     },
-                    enabled = text.isNotBlank()
+                    enabled = text.isNotBlank(),
+                    colors = if (isDark) ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSecondary) else ButtonDefaults.textButtonColors()
                 ) { Text("Add") }
             },
             dismissButton = {
-                TextButton(onClick = { showAddDialog.value = false }) { Text("Cancel") }
+                TextButton(
+                    onClick = { showAddDialog.value = false },
+                    colors = if (isDark) ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSecondary) else ButtonDefaults.textButtonColors()
+                ) { Text("Cancel") }
             }
         )
     }

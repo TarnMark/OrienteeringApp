@@ -1,5 +1,6 @@
 package ee.ut.cs.orienteering.ui.screens
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -103,7 +105,18 @@ fun JoinLobbyScreen(
                 value = code,
                 onValueChange = { code = it },
                 label = { Text(stringResource(R.string.lobby_code)) },
-                singleLine = true
+                singleLine = true,
+                colors = if (isSystemInDarkTheme()) {
+                    OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                        focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                    )
+                } else {
+                    OutlinedTextFieldDefaults.colors()
+                }
             )
 
             Spacer(Modifier.height(buttonSpacing))
