@@ -1,5 +1,8 @@
 # Fast and Curious
-GPS and maps-based mobile app that allows to create and participate in orienteering events that involve getting to certain points and answering the questions
+Maps-based mobile app that allows to create and participate in orienteering events that involve getting to certain points and answering the questions
+
+## Detailed Documentation
+The detailed documentation and overview of the created app can be found here: [Doc](https://docs.google.com/document/d/1Y9sVlTvew8EEc4AjCcfhyrQ1lFLbwNCgfwHCTG_56dY/edit?usp=sharing) . It also contains the demo video of the app workflow. 
 
 ## Brief Instructions For The App
 ### Creating Quests (Lobbies)
@@ -18,17 +21,12 @@ GPS and maps-based mobile app that allows to create and participate in orienteer
 <li> By clicking on an empty spot on the map, you get the weather information about the place you clicked on. It is displayed at the top right corner of the map view. Requires internet connection. </li>
 
 ## Team Members
-<li> <b>Project Leader:</b> Mark Tarnovski</li>
-<li> <b>Researcher:</b> Liselle Velner</li>
-<li> <b>Editor:</b> Angelina Zhumadilova</li>
-<li> <b>Lead Developer:</b> Erik Kippus</li>
+<li> <b>Project Leader:</b> Mark Tarnovski ([TarnMark](https://github.com/TarnMark)) </li>
+<li> <b>Researcher:</b> Liselle Velner ([lisellev](https://github.com/lisellev))</li>
+<li> <b>Editor:</b> Angelina Zhumadilova</li> ([angelinazhuma](https://github.com/angelinazhuma))
+<li> <b>Lead Developer:</b> Erik Kippus ([erikkip](https://github.com/erikkip))</li>
 
 ## Core App Features
 <li> Creating maps with quests/questions tied to chosen location </li>
 <li> Creating and managing lobbies for orienteering events </li>
 <li> Signing up and participating in organized orienteering events </li>
-
-## Tools & Frameworks
-<li> Android Studio </li>
-<li> Written in Kotlin </li>
-<li> Jetpack Compose(/XML)</li>
