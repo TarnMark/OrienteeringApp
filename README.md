@@ -21,10 +21,10 @@ The detailed documentation and overview of the created app can be found here: [D
 <li> By clicking on an empty spot on the map, you get the weather information about the place you clicked on. It is displayed at the top right corner of the map view. Requires internet connection. </li>
 
 ## Team Members
-<li> <b>Project Leader:</b> Mark Tarnovski ([TarnMark](https://github.com/TarnMark)) </li>
-<li> <b>Researcher:</b> Liselle Velner ([lisellev](https://github.com/lisellev))</li>
-<li> <b>Editor:</b> Angelina Zhumadilova</li> ([angelinazhuma](https://github.com/angelinazhuma))
-<li> <b>Lead Developer:</b> Erik Kippus ([erikkip](https://github.com/erikkip))</li>
+<li> <b>Project Leader:</b> Mark Tarnovski </li>
+<li> <b>Researcher:</b> Liselle Velner </li>
+<li> <b>Editor:</b> Angelina Zhumadilova </li>
+<li> <b>Lead Developer:</b> Erik Kippus </li>
 
 ## Core App Features
 <li> Creating maps with quests/questions tied to chosen location </li>
